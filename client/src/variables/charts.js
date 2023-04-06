@@ -10,6 +10,48 @@ function generateRandomColors(n) {
   return colors;
 }
 
+const lacherChart=(date, value1, value2) => {
+  const formattedDate = date.toLocaleDateString('en-GB').replace(/\//g, '-');
+  const dateParts = formattedDate.split('-');
+    const month = dateParts[1];
+    const day = dateParts[0];
+    const Ytitle = `${day}-${month}`
+  return{
+  data: (canvas) => {
+    return {
+      
+      labels: [Ytitle],
+      datasets: [
+        {
+          label: date.getFullYear(),
+          data: [value1],
+          backgroundColor:"#e3e3e3" ,
+        },
+        {
+          label: date.getFullYear() - 1,
+          data: [value2],
+          backgroundColor: "#4acccd",
+        },
+      ],
+    };
+  },
+  options: {
+    responsive: true,
+  plugins: {
+    legend: {
+      position: 'top',
+    },
+    title: {
+      display: true,
+      text: 'Chart.js Bar Chart',
+    },
+  },
+  }
+  
+}
+};
+
+
 const dashboardEmailStatisticsChart=(exploitation) => {
   const keys = Object.keys(exploitation);
   const values = Object.values(exploitation);
@@ -34,7 +76,7 @@ const dashboardEmailStatisticsChart=(exploitation) => {
 }
 };
 
-const dashboardNASDAQChart = (labels, dataset1, dataset2)=> {
+const dashboardNASDAQChart = (labels, dataset1)=> {
 
   return{
   data: (canvas) => {
@@ -43,6 +85,8 @@ const dashboardNASDAQChart = (labels, dataset1, dataset2)=> {
       datasets: [
         {
           data: dataset1,
+          label: '',
+          id: 1,
           fill: false,
           borderColor: "#fbc658",
           backgroundColor: "transparent",
@@ -52,6 +96,7 @@ const dashboardNASDAQChart = (labels, dataset1, dataset2)=> {
           pointBorderWidth: 0.5,
           tension: 0.4
         }
+
       ]
     };
   },
@@ -86,5 +131,6 @@ const dashboardNASDAQChart = (labels, dataset1, dataset2)=> {
 
 module.exports = {
   dashboardEmailStatisticsChart,
-  dashboardNASDAQChart
+  dashboardNASDAQChart,
+  lacherChart
 };

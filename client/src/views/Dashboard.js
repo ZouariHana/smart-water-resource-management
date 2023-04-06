@@ -4,7 +4,7 @@ import axios from "axios";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 // react plugin used to create charts
-import { Line, Pie } from "react-chartjs-2";
+import { Line, Pie, Bar } from "react-chartjs-2";
 // reactstrap components
 import {
   Card,
@@ -18,14 +18,18 @@ import {
 // core components
 import {
   dashboardEmailStatisticsChart,
-  dashboardNASDAQChart
+  dashboardNASDAQChart,
+  lacherChart
 } from "variables/charts.js";
 function Dashboard() {
   const [value, onChange] = useState(new Date());
   const [damId, setDamId] = useState("1");
   const [data1, setData1] = useState([]);
+  // const [data2, setData2] = useState([]);
   const [remplissage, setRemplissage] = useState(0);
   const [exp, setExp] = useState([]);
+  const [lacher, setLacher] = useState([]);
+  const [apport, setApport] = useState([]);
   useEffect(() => {
     console.log(value);
     const formattedDate = value.toLocaleDateString('en-GB').replace(/\//g, '-');
@@ -40,7 +44,9 @@ function Dashboard() {
   }
   ,[value]);
   useEffect(() => {
+    const lastYearDate = new Date(value.getFullYear() - 1, value.getMonth(), value.getDate());
     const formattedDate = value.toLocaleDateString('en-GB').replace(/\//g, '-');
+    const formattedDate2 = lastYearDate.toLocaleDateString('en-GB').replace(/\//g, '-');
     axios
       .get(`http://localhost:5000/stocks/${damId}/${formattedDate}`)
       .then((response) => {
@@ -50,6 +56,15 @@ function Dashboard() {
       .catch((error) => {
         console.log(error);
       });
+      // axios
+      // .get(`http://localhost:5000/stocks/${damId}/${formattedDate2}`)
+      // .then((response) => {
+      //   setData2(response.data['stocks']);
+      //   console.log(response.data)
+      // })
+      // .catch((error) => {
+      //   console.log(error);
+      // });
       axios
       .get(`http://localhost:5000/tauxRemplissage/${damId}/${formattedDate}`)
       .then((response) => {
@@ -59,7 +74,24 @@ function Dashboard() {
       .catch((error) => {
         console.log(error);
       });
-      
+      axios
+      .get(`http://localhost:5000/lacher/${damId}/${formattedDate}`)
+      .then((response) => {
+        setLacher(response.data)
+        console.log(response.data)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+      axios
+      .get(`http://localhost:5000/apport/${damId}/${formattedDate}`)
+      .then((response) => {
+        setApport(response.data)
+        console.log(response.data)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, [value, damId]);
   const dateValues = data1.map((item) => {
     const dateParts = item.Date_Stock.split('-');
@@ -68,9 +100,11 @@ function Dashboard() {
     return `${day}-${month}`;
   });
   const stockValues1 = data1.map((item) => item.Valeur_Stock);
-  
+  // const stockValues2 = data2.map((item) => item.Valeur_Stock);
+  console.log(data1)
   const handleDamChange = (e) => {
-    setDamId(e.target.value);
+    const value = e.target.value;
+      setDamId(value);
   };
   const options = [];
   for (let i = 1; i <= 36; i++) {
@@ -82,9 +116,9 @@ function Dashboard() {
       <ul>
         <select onChange={handleDamChange}>
           {options}
-          <option>Barrages S/T Nord</option>
-          <option>Barrages S/T Centre</option>
-          <option>Barrages S/T Cap-Bon</option>
+          <option>Barrages ST Nord</option>
+          <option>Barrages ST Centre</option>
+          <option>Barrages ST Cap-Bon</option>
           <option>Tous les barrages</option>
         </select>
         <Calendar onChange={onChange} value={value} />
@@ -196,6 +230,48 @@ function Dashboard() {
           </Col>
         </Row>
         <Row>
+          <Col md="6">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h5">Lâchers du jour</CardTitle>
+                <p className="card-category"></p>
+              </CardHeader>
+              <CardBody style={{ height: "366px" }}>
+                <Bar
+                  data={lacherChart(value,lacher[0], lacher[1]).data}
+                  options={lacherChart(value,lacher[0],lacher[1]).options}
+                />
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="fa fa-calendar" /> Number of emails sent
+                </div>
+              </CardFooter>
+            </Card>
+         
+          </Col>
+          <Col md="6">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h5">Apports du jour</CardTitle>
+                <p className="card-category"></p>
+              </CardHeader>
+              <CardBody style={{ height: "366px" }}>
+                <Bar
+                  data={lacherChart(value,apport[0], apport[1]).data}
+                  options={lacherChart(value,apport[0],apport[1]).options}
+                />
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="fa fa-calendar" /> Number of emails sent
+                </div>
+              </CardFooter>
+            </Card>
+         
+          </Col>
+        </Row>
+        <Row>
           <Col md="4">
             <Card>
               <CardHeader>
@@ -223,6 +299,7 @@ function Dashboard() {
       </CardHeader>
       <CardBody>
         <Line
+                  datasetIdKey='id'
                   data={dashboardNASDAQChart(dateValues,stockValues1).data}
                   options={dashboardNASDAQChart(dateValues,stockValues1).options}
                   width={400}
@@ -231,9 +308,6 @@ function Dashboard() {
   
       </CardBody>
       <CardFooter>
-        <div className="chart-legend">
-          <i className="fa fa-circle text-info" />
-        </div>
         <hr />
         <div className="card-stats">
           <i className="fa fa-check" /> Data information certified

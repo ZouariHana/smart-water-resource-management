@@ -3,10 +3,12 @@ from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from Model import *
+from app import app,db
 from app import *
 from datetime import date
 from sqlalchemy import func
 from decimal import Decimal
+from dateutil.relativedelta import relativedelta
 @app.route('/stocks/<dam_id>/<date>')
 def get_stocks(dam_id, date):
     try:
@@ -20,26 +22,23 @@ def get_stocks(dam_id, date):
             Stocks.Date_Stock.between(start_date, end_date)).group_by(Stocks.Date_Stock)\
             .order_by(Stocks.Date_Stock).all()
             print(stocks)
-        elif dam_id =='Barrages S/T Nord':
+        elif dam_id =='Barrages ST Nord':
             stocks = db.session.query(func.sum(Stocks.Valeur_Stock))\
             .join(Barrage, Stocks.idBarrage == Barrage.idBarrage)\
-            .join(Region, Barrage.idRegion == Region.idRegion)\
-            .filter(Stocks.Date_Stock.between(start_date, end_date))\
-            .filter(Region.Nom == 'S/T Nord').group_by(Stocks.Date_Stock)\
+            .filter(Stocks.Date_Stock.between(start_date, end_date),Barrage.idRegion == 1)\
+            .group_by(Stocks.Date_Stock)\
             .order_by(Stocks.Date_Stock).all()
-        elif dam_id =='Barrages S/T Centre':
+        elif dam_id =='Barrages ST Centre':
             stocks = db.session.query(func.sum(Stocks.Valeur_Stock))\
             .join(Barrage, Stocks.idBarrage == Barrage.idBarrage)\
-            .join(Region, Barrage.idRegion == Region.idRegion)\
             .filter(Stocks.Date_Stock.between(start_date, end_date))\
-            .filter(Region.Nom == 'S/T Centre').group_by(Stocks.Date_Stock)\
+            .filter(Barrage.idRegion == 2).group_by(Stocks.Date_Stock)\
             .order_by(Stocks.Date_Stock).all()
-        elif dam_id =='Barrages S/T Cap-Bon':
+        elif dam_id =='Barrages ST Cap-Bon':
             stocks = db.session.query(func.sum(Stocks.Valeur_Stock))\
             .join(Barrage, Stocks.idBarrage == Barrage.idBarrage)\
-            .join(Region, Barrage.idRegion == Region.idRegion)\
             .filter(Stocks.Date_Stock.between(start_date, end_date))\
-            .filter(Region.Nom == 'S/T Cap-Bon').group_by(Stocks.Date_Stock)\
+            .filter(Barrage.idRegion == 3).group_by(Stocks.Date_Stock)\
             .order_by(Stocks.Date_Stock).all()
         else:
             stocks = db.session.query(Stocks.Valeur_Stock, Stocks.Date_Stock).filter( Stocks.idBarrage == int(dam_id)
@@ -92,21 +91,17 @@ def get_taux(dam_id, date):
         if dam_id == 'Tous les barrages':
         # Retrieve the sum of data for all dams
             capacity = db.session.query(func.sum(Barrage.cap_utile_actuelle)).scalar()
-            taux = (stock/capacity)*100
-        elif dam_id =='Barrages S/T Nord':
+        elif dam_id =='Barrages ST Nord':
             print("hello")
             capacity = db.session.query(func.sum(Barrage.cap_utile_actuelle))\
-            .join(Region, Barrage.idRegion == Region.idRegion)\
-            .filter(Region.Nom == 'S/T Nord').scalar()
+            .filter(Barrage.idRegion == 1).scalar()
             print(capacity)
-        elif dam_id =='Barrages S/T Centre':
+        elif dam_id =='Barrages ST Centre':
             capacity = db.session.query(func.sum(Barrage.cap_utile_actuelle))\
-            .join(Region, Barrage.idRegion == Region.idRegion)\
-            .filter(Region.Nom == 'S/T Centre').scalar()
-        elif dam_id =='Barrages S/T Cap-Bon': 
+            .filter(Barrage.idRegion == 2).scalar()
+        elif dam_id =='Barrages ST Cap-Bon': 
             capacity = db.session.query(func.sum(Barrage.cap_utile_actuelle))\
-            .join(Region, Barrage.idRegion == Region.idRegion)\
-            .filter(Region.Nom == 'S/T Cap-Bon').scalar()
+            .filter(Barrage.idRegion == 3).scalar()
         else:
             capacity = db.session.query(Barrage.cap_utile_actuelle)\
             .filter(Barrage.idBarrage == int(dam_id)).scalar()
@@ -115,4 +110,33 @@ def get_taux(dam_id, date):
         taux = (stock/capacity)*100
         taux = round(taux, 1)
         return ([taux])
+
+@app.route('/lacher/<dam_id>/<date>')
+def get_lacher(dam_id, date):
+    try:
+        print(dam_id)
+        date_object = datetime.strptime(date, '%d-%m-%Y')
+        last_year_date = date_object - relativedelta(years=1)
+        lacher1 = db.session.query(Lachers.valeur_lacher).filter( Lachers.idBarrage == int(dam_id)
+            ,Lachers.date_lacher== date_object).scalar()
+        lacher2 = db.session.query(Lachers.valeur_lacher).filter( Lachers.idBarrage == int(dam_id)
+            ,Lachers.date_lacher== last_year_date).scalar()
+        
+        return ([lacher1, lacher2])
+    except Exception as e:
+        return ({"error": str(e)})
     
+@app.route('/apport/<dam_id>/<date>')
+def get_apport(dam_id, date):
+    try:
+        print(dam_id)
+        date_object = datetime.strptime(date, '%d-%m-%Y')
+        last_year_date = date_object - relativedelta(years=1)
+        apport1 = db.session.query(Apports.valeur_apport).filter( Apports.idBarrage == int(dam_id)
+            ,Apports.date_apport== date_object).scalar()
+        apport2 = db.session.query(Apports.valeur_apport).filter( Apports.idBarrage == int(dam_id)
+            ,Apports.date_apport== last_year_date).scalar()
+        
+        return ([apport1, apport2])
+    except Exception as e:
+        return ({"error": str(e)})
