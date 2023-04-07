@@ -5,6 +5,8 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 // react plugin used to create charts
 import { Line, Pie, Bar } from "react-chartjs-2";
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 // reactstrap components
 import {
   Card,
@@ -30,6 +32,7 @@ function Dashboard() {
   const [exp, setExp] = useState([]);
   const [lacher, setLacher] = useState([]);
   const [apport, setApport] = useState([]);
+  const [ichkeul, setIchkeul] = useState(0);
   useEffect(() => {
     console.log(value);
     const formattedDate = value.toLocaleDateString('en-GB').replace(/\//g, '-');
@@ -110,10 +113,17 @@ function Dashboard() {
   for (let i = 1; i <= 36; i++) {
     options.push(<option value={i}>{i}</option>);
   }
+
   return (
     <>
       <div className="content">
-      <ul>
+        <Row>
+        <Col lg="3" md="6" sm="6">
+        <Card className="card-stats">
+        <CardHeader>
+        <CardTitle tag="h5">Choisir un barrage</CardTitle>
+      </CardHeader>
+        <CardBody>
         <select onChange={handleDamChange}>
           {options}
           <option>Barrages ST Nord</option>
@@ -121,8 +131,17 @@ function Dashboard() {
           <option>Barrages ST Cap-Bon</option>
           <option>Tous les barrages</option>
         </select>
+        </CardBody>
+        </Card>
+        </Col>
+        <Col md ="6" lg="4" sm="20">
+        <Card className="card-stats">
+        <CardBody>
         <Calendar onChange={onChange} value={value} />
-        </ul>
+        </CardBody>
+        </Card>
+        </Col>
+        </Row>
         <Row>
           <Col lg="3" md="6" sm="6">
             <Card className="card-stats">
@@ -142,12 +161,6 @@ function Dashboard() {
                   </Col>
                 </Row>
               </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="fas fa-sync-alt" /> Update Now
-                </div>
-              </CardFooter>
             </Card>
           </Col>
           <Col lg="3" md="6" sm="6">
@@ -161,73 +174,16 @@ function Dashboard() {
                   </Col>
                   <Col md="8" xs="7">
                     <div className="numbers">
-                      <p className="card-category">Revenue</p>
-                      <CardTitle tag="p">$ 1,345</CardTitle>
+                      <p className="card-category">Alimentation de Ichkeul</p>
+                      <CardTitle tag="p">{ichkeul}</CardTitle>
                       <p />
                     </div>
                   </Col>
                 </Row>
               </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="far fa-calendar" /> Last day
-                </div>
-              </CardFooter>
             </Card>
           </Col>
-          <Col lg="3" md="6" sm="6">
-            <Card className="card-stats">
-              <CardBody>
-                <Row>
-                  <Col md="4" xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-vector text-danger" />
-                    </div>
-                  </Col>
-                  <Col md="8" xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Errors</p>
-                      <CardTitle tag="p">23</CardTitle>
-                      <p />
-                    </div>
-                  </Col>
-                </Row>
-              </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="far fa-clock" /> In the last hour
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
-          <Col lg="3" md="6" sm="6">
-            <Card className="card-stats">
-              <CardBody>
-                <Row>
-                  <Col md="4" xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-favourite-28 text-primary" />
-                    </div>
-                  </Col>
-                  <Col md="8" xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Followers</p>
-                      <CardTitle tag="p">+45K</CardTitle>
-                      <p />
-                    </div>
-                  </Col>
-                </Row>
-              </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="fas fa-sync-alt" /> Update now
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
+        
         </Row>
         <Row>
           <Col md="6">
@@ -242,11 +198,6 @@ function Dashboard() {
                   options={lacherChart(value,lacher[0],lacher[1]).options}
                 />
               </CardBody>
-              <CardFooter>
-                <div className="stats">
-                  <i className="fa fa-calendar" /> Number of emails sent
-                </div>
-              </CardFooter>
             </Card>
          
           </Col>
@@ -262,11 +213,6 @@ function Dashboard() {
                   options={lacherChart(value,apport[0],apport[1]).options}
                 />
               </CardBody>
-              <CardFooter>
-                <div className="stats">
-                  <i className="fa fa-calendar" /> Number of emails sent
-                </div>
-              </CardFooter>
             </Card>
          
           </Col>
@@ -284,11 +230,6 @@ function Dashboard() {
                   options={dashboardEmailStatisticsChart(exp).options}
                 />
               </CardBody>
-              <CardFooter>
-                <div className="stats">
-                  <i className="fa fa-calendar" /> Number of emails sent
-                </div>
-              </CardFooter>
             </Card>
           </Col>
           <Col md="8">
@@ -307,12 +248,6 @@ function Dashboard() {
                 />
   
       </CardBody>
-      <CardFooter>
-        <hr />
-        <div className="card-stats">
-          <i className="fa fa-check" /> Data information certified
-        </div>
-      </CardFooter>
     </Card>
           </Col>
         </Row>

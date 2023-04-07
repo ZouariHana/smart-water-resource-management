@@ -52,19 +52,19 @@ function Sidebar(props) {
       data-active-color={props.activeColor}
     >
       <div className="logo">
-        <a
+        {/* <a
           href="https://www.creative-tim.com"
           className="simple-text logo-mini"
         >
           <div className="logo-img">
             <img src={logo} alt="react-logo" />
           </div>
-        </a>
+        </a> */}
         <a
-          href="https://www.creative-tim.com"
+          href="http://www.onagri.nat.tn/barrages"
           className="simple-text logo-normal"
         >
-          Creative Tim
+          Situation des barrages
         </a>
       </div>
       <div className="sidebar-wrapper" ref={sidebar}>
