@@ -26,7 +26,7 @@ import "assets/demo/demo.css";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 import AdminLayout from "layouts/Admin.js";
-
+import DownloadPDF from "views/DownloadPDF";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(

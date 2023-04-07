@@ -30,7 +30,8 @@ import routes from "routes.js";
 
 var ps;
 
-function Dashboard(props) {
+//function Dashboard(props) {
+function AdminLayout(props) {
   const [backgroundColor, setBackgroundColor] = React.useState("black");
   const [activeColor, setActiveColor] = React.useState("info");
   const mainPanel = React.useRef();
@@ -61,7 +62,7 @@ function Dashboard(props) {
     <div className="wrapper">
       <Sidebar
         {...props}
-        routes={routes}
+        routes={routes.slice(0, -1)}
         bgColor={backgroundColor}
         activeColor={activeColor}
       />
@@ -90,4 +91,4 @@ function Dashboard(props) {
   );
 }
 
-export default Dashboard;
+export default AdminLayout;
