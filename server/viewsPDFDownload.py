@@ -51,7 +51,7 @@ def situation(date):
     return jsonify(json_data)
 
 
-@app.route('/download', methods=['POST', 'GET'])
+@app.route('/down', methods=['POST', 'GET'])
 def generate_pdf():
     html = request.json['html'] # get the HTML page from the request data
     print(html)

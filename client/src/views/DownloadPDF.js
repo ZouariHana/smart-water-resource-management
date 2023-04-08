@@ -75,7 +75,7 @@ function DownloadPDF() {
     sendHTMLToFlask(html);
   };
   const sendHTMLToFlask = (html) => {
-    axios.post('`http://localhost:5000/api/download', { html }, { responseType: 'blob' })
+    axios.post('http://localhost:5000/down', { html }, { responseType: 'blob' })
     .then(response => {
       // create a blob URL for the returned file data
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -100,11 +100,13 @@ function DownloadPDF() {
         <Row>
           <Col md="12">
             <Card>
-              <CardHeader>Téléchargement PDF</CardHeader>
+            <CardHeader><br/> </CardHeader>
               <CardBody>
                 <div >
-                  <button onClick={generateHTML}>Télécharger PDF</button>
-    
+                  <button  className="btn-round"
+                        color="primary"style={{ display: 'block', margin: '10px auto', width: '70%' }} onClick={generateHTML}>Télécharger PDF</button>
+                  <br/>
+                  <br/>
                 </div>
               </CardBody>
             </Card>
