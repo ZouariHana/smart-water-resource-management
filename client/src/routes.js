@@ -1,29 +1,15 @@
-/*!
 
-=========================================================
-* Paper Dashboard React - v1.3.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/main/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import Dashboard from "views/Dashboard.js";
 import Notifications from "views/Notifications.js";
 import Icons from "views/Icons.js";
 import GeneratedPDF from "views/GeneratedPDF";
-import TableList from "views/Tables.js";
 import Maps from "views/Map.js";
 import UserPage from "views/User.js";
 import DownloadPDF from "views/DownloadPDF";
+import AdminPage from "views/AdminPage.js";
+import AgentPage from "views/AgentPage.js";
+import GestionAgent from "views/GestionAgent";
+import GestionAdmin from "views/GestionAdmin";
 
 var routes = [
   {
@@ -54,19 +40,44 @@ var routes = [
     component: Notifications,
     layout: "/admin"
   },
+
   {
     path: "/user-page",
-    name: "User Profile",
+    name: "Espace Intranet",
     icon: "nc-icon nc-single-02",
     component: UserPage,
     layout: "/admin"
   },
   {
-    path: "/tables",
-    name: "Table List",
-    icon: "nc-icon nc-tile-56",
-    component: TableList,
+    path: "/PDF",
+    name: "PDF",
+    icon: "nc-icon nc-caps-small",
+    component: GeneratedPDF,
     layout: "/admin"
+  },
+  {
+    path: "/admin-page",
+    name: "Admin Page",
+    component: AdminPage,
+    layout: "/admin",
+  },
+  {
+    path: "/agent-page",
+    name: "Agent Page",
+    component: AgentPage,
+    layout: "/admin",
+  },
+  {
+    path: "/gestion-agent",
+    name: "Gestion Agent",
+    component: GestionAgent,
+    layout: "/admin",
+  },
+  {
+    path: "/gestion-admin",
+    name: "Gestion Admin",
+    component: GestionAdmin,
+    layout: "/admin",
   },
   {
     path: "/typography",

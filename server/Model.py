@@ -97,7 +97,7 @@ class Region(db.Model):
     Nom= db.Column(db.String(100),unique=True)
     barrage0 = db.relationship('Barrage', back_populates="region", foreign_keys='Barrage.idRegion')
 
-class Admin(db.Model):
+class Admin1(db.Model):
     __tablename__ = 'admin'
     idAdmin = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(100), nullable=False)
@@ -108,4 +108,4 @@ class GererUt(db.Model):
     idUser = db.Column(db.Integer, db.ForeignKey('utilisateur.idUser'), primary_key=True)
     idAdmin = db.Column(db.Integer, db.ForeignKey('admin.idAdmin'), primary_key=True)
     utilisateur = db.relationship('Utilisateur', backref=db.backref('gererut'))
-    admin = db.relationship('Admin', backref=db.backref('gererut'))
+    admin = db.relationship('Admin1', backref=db.backref('gererut'))
