@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 import os
 import redis
 
-
 app = Flask(__name__)
 
 
@@ -19,7 +18,7 @@ class ApplicationConfig:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:pcdpcdimen@localhost/pcd'
+    SQLALCHEMY_DATABASE_URI = 'mysql://root@localhost/pcd'
 
     SESSION_TYPE = "redis"
     SESSION_PERMANENT = False

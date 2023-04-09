@@ -10,8 +10,15 @@ import AdminPage from "views/AdminPage.js";
 import AgentPage from "views/AgentPage.js";
 import GestionAgent from "views/GestionAgent";
 import GestionAdmin from "views/GestionAdmin";
-
+import Accueil from "views/Accueil";
 var routes = [
+  {
+    path: "/Accueil",
+    name: "Accueil",
+    icon: "nc-icon nc-bank",
+    component: Accueil,
+    layout: "/admin"
+  },
   {
     path: "/dashboard",
     name: "Dashboard",
@@ -79,13 +86,7 @@ var routes = [
     component: GestionAdmin,
     layout: "/admin",
   },
-  {
-    path: "/typography",
-    name: "PDF",
-    icon: "nc-icon nc-caps-small",
-    component: GeneratedPDF,
-    layout: "/admin"
-  },
+
   {
     path: "/DownloadPDF/:date",
     name: "Téléchargement",

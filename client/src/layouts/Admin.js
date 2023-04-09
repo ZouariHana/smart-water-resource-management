@@ -62,7 +62,7 @@ function AdminLayout(props) {
     <div className="wrapper">
       <Sidebar
         {...props}
-        routes={routes.slice(0, -6)}
+        routes={routes.slice(0, -5)}
         bgColor={backgroundColor}
         activeColor={activeColor}
       />
