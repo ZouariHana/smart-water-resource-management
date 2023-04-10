@@ -289,3 +289,22 @@ def logout_user():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+@app.route('/barrages')
+def situation1():
+    data = db.session.query(
+        Barrage.Nom,
+        Barrage.Latitude,
+        Barrage.Longitude
+    ).filter(
+        Barrage.Latitude.isnot(None),
+        Barrage.Longitude.isnot(None)
+    ).all()
+    json_data = []
+    for row in data:
+        json_data.append({
+            'Nom': row[0],
+            'Latitude': row[1],
+            'Longitude': row[2],
+        })
+    return jsonify(json_data)

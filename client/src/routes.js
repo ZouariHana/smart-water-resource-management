@@ -22,7 +22,7 @@ var routes = [
   {
     path: "/dashboard",
     name: "Dashboard",
-    icon: "nc-icon nc-bank",
+    icon: "nc-icon nc-chart-pie-36",
     component: Dashboard,
     layout: "/admin"
   },

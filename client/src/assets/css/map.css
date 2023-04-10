@@ -1,0 +1,10 @@
+@import url("~leaflet/dist/leaflet.css");
+.leaflet-container {
+  width: 100%;
+  height: 47vh;
+}
+.map-container {
+    height: 404px;
+    width: 100%;
+ 
+  }

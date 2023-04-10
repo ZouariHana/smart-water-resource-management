@@ -1,8 +1,12 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
 import axios from "axios";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import '../assets/css/map.css'
+
 // react plugin used to create charts
 import { Line, Pie, Bar } from "react-chartjs-2";
 // reactstrap components
@@ -31,6 +35,46 @@ function Dashboard() {
   const [lacher, setLacher] = useState([]);
   const [apport, setApport] = useState([]);
   const [ichkeul, setIchkeul] = useState(0);
+
+  const [barrages, setBarrages] = useState([]);
+  
+  // fetch barrage locations from Flask API endpoint
+  useEffect(() => {
+    axios.get('http://localhost:5000/barrages').then(response => {
+      setBarrages(response.data);
+    });
+  }, []);
+
+  const position = [36.81897, 10.16579];
+
+  const markerList = barrages.map((barrage) => (
+    <Marker
+      key={barrage.Nom}
+      position={[barrage.Latitude, barrage.Longitude]}
+      title={barrage.Nom}
+    >
+      <Popup>
+        <h3>{barrage.Nom}</h3>
+        <p>
+          Latitude: {barrage.Latitude}, Longitude: {barrage.Longitude}
+        </p>
+      </Popup>
+    </Marker>
+  ));
+
+  const mapStyle = {
+    height: "100vh",
+    width: "100%",
+  };
+
+  // Create LatLngBounds object and extend it to include each marker position
+  const bounds = L.latLngBounds(
+    barrages
+      .filter((barrage) => barrage.Latitude !== null && barrage.Longitude !== null)
+      .map((barrage) => [barrage.Latitude, barrage.Longitude])
+  );
+
+
   useEffect(() => {
     console.log(value);
     const formattedDate = value.toLocaleDateString('en-GB').replace(/\//g, '-');
@@ -116,10 +160,10 @@ function Dashboard() {
     <>
       <div className="content">
         <Row>
-        <Col lg="3" md="6" sm="6">
+        <Col lg="6" md="6" sm="6">
         <Card className="card-stats">
         <CardHeader>
-        <CardTitle tag="h5">Choisir un barrage</CardTitle>
+        <CardTitle tag="h5">Observer la situation hydraulique du barrage d'Id x à une date spécifique</CardTitle>
       </CardHeader>
         <CardBody>
         <select onChange={handleDamChange}>
@@ -129,16 +173,37 @@ function Dashboard() {
           <option>Barrages ST Cap-Bon</option>
           <option>Tous les barrages</option>
         </select>
-        </CardBody>
-        </Card>
-        </Col>
-        <Col md ="6" lg="4" sm="20">
-        <Card className="card-stats">
-        <CardBody>
+        
+       <br/><br/>
         <Calendar onChange={onChange} value={value} />
+        <br/><br/><br/>
+        
         </CardBody>
         </Card>
         </Col>
+
+        <Col lg="6" md="6" sm="6">
+        <Card className="card-stats">
+        <CardHeader>
+        <CardTitle tag="h5">Répartition des barrages</CardTitle>
+      </CardHeader>
+        <CardBody>
+        <div className="map-container">
+          <MapContainer center={position} zoom={7} scrollWheelZoom={false}>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {markerList}
+          </MapContainer>
+        </div>
+
+        </CardBody>
+        </Card>
+        </Col>
+
+
+
         </Row>
         <Row>
           <Col lg="3" md="6" sm="6">
@@ -150,7 +215,7 @@ function Dashboard() {
                       <i className="nc-icon nc-globe text-warning" />
                     </div>
                   </Col>
-                  <Col md="8" xs="7">
+                  <Col md="7" xs="7">
                     <div className="numbers">
                       <p className="card-category">Taux de remplissage</p>
                       <CardTitle tag="p">{remplissage}</CardTitle>
@@ -254,4 +319,11 @@ function Dashboard() {
   );
 }
 
+let DefaultIcon = L.icon({
+  iconUrl: "http://unpkg.com/leaflet@1.6/dist/images/marker-icon.png",
+  iconSize: [20, 35],
+  iconAnchor: [10, 41],
+  popupAnchor: [2, -40],
+});
+L.Marker.prototype.options.icon = DefaultIcon;
 export default Dashboard;
