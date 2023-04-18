@@ -1,4 +1,4 @@
-import React ,{ useState } from 'react'
+import React, { useState , useEffect } from 'react';
 import httpClient from "../httpClient";
 import {
   Button,
@@ -16,7 +16,6 @@ import {
 
 
 const TacheAgent = () => { 
-  const [nom_barrage, setnom_barrage ]= useState("");
   const [valeur_lacher, setvaleur_lacher] = useState("");
   const [utilisation, setutilisation] = useState("");
   const [valeur_apport, setvaleur_apport] = useState("");
@@ -24,12 +23,51 @@ const TacheAgent = () => {
   const [valeur_lachIch, setvaleur_lachIch] = useState("");
   const [valeur_RS, setvaleur_RS] = useState("");
   const [valeur_Pluv, setvaleur_Pluv] = useState("");
-  const [date, setdate] = useState("");        
+  const [date, setdate] = useState("");  
+  const [nomBarrage, setNomBarrage] = useState("");  
+  const [agent, setAgent] = useState({});
+  // First, retrieve the information of the logged-in agent from the backend
+  useEffect(() => {
+    const fetchAgent = async () => {
+      try {
+        const response = await httpClient.get("//localhost:5000/agent")
+        setAgent(response.data);
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          alert("Invalid credentials");
+        }
+      }   
+    };    
+    fetchAgent();
+  }, []);
 
+// Then, use the idBarrage of the logged-in agent to fetch the name of the corresponding barrage
+useEffect(() => {
+  const fetchBarrage = async () => {
+    try {
+      const response = await httpClient.get(`//localhost:5000/Barrage/${agent.idBarrage}`);
+      setNomBarrage(response.data.Nom);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  if (agent.idBarrage) {
+    fetchBarrage();
+  }
+}, [agent]);
+
+/*useEffect(() => {
+  if (agent.nomBarrage) {
+    setNomBarrage(agent.nomBarrage);
+  }
+}, [agent]);*/
+
+
+  
   const ajouterAgent = async () => {
     try {
         await httpClient.post("//localhost:5000/gestionAgent", { 
-        nom_barrage,
+        nomBarrage,
         valeur_lacher,
         utilisation,
         valeur_apport,
@@ -46,7 +84,18 @@ const TacheAgent = () => {
         alert("Invalid credentials");
       }
     }
+
   };
+  const logoutUser = async () => {
+    try {
+      await httpClient.post("//localhost:5000/logout"); // make a request to the logout endpoint
+      window.location.href = "/admin/user-page"; // redirect to the login page
+    } catch (error) {
+      console.error(error);
+      alert("Failed to logout");
+    }
+  };
+  
 
   return (
     <>
@@ -55,35 +104,22 @@ const TacheAgent = () => {
          <Col className ="content mx-auto " md="8">
             <Card className="card-user">
           <CardHeader>
-          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Gestion Agent Page</CardTitle>
+          <Button  className="ml-15" color="primary" onClick={logoutUser}>Déconnecter</Button>
+          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}> Gestion Barrage :  {nomBarrage} </CardTitle>
           </CardHeader>
           <CardBody>
             <Form >
             <Row>
               <Col className="px-1 mx-auto" md="6">
               <FormGroup>
-              <label>Nom Barrage:</label>
-               <select
-               className="form-control"
-               value={nom_barrage}
-               onChange={(event) => setnom_barrage(event.target.value)}
-              >
-              <option value="mellegue">mellegue</option>
-              <option value="benmetir">benmetir</option>
-              <option value="kasseb">kasseb</option>
-              <option value="barbara">barbara</option>
-              <option value="sidisalem">sidisalem</option>
-              <option value="bouheurtma">bouheurtma</option>
-              <option value="joumine">joumine</option>
-              <option value="ghezala">ghezala</option>
-              <option value="sejnane">sejnane</option>
-              <option value="zarga">zarga</option>
-              <option value="selbarrak">selbarrak</option>
-              <option value="ziatine">ziatine</option>
-              <option value="gamgoum">gamgoum</option>
-              </select>
-      
-            </FormGroup>
+                <label htmlFor="nom_barrage">Nom Barrage</label>
+                <input
+                   className="form-control"
+                   value={nomBarrage}
+                   placeholder="Nom Barrage"
+                   disabled
+                 />
+              </FormGroup>
          </Col>
       </Row>
               <Row>

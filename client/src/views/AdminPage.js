@@ -1,4 +1,5 @@
 import React from 'react'
+import httpClient from "../httpClient";
 import {
   Card,
   CardHeader,
@@ -18,6 +19,15 @@ function gogestionpageadmin() {
   window.location.href = "/admin/gestion-admin" }  
 
 const AdminPage = () => {
+  const logoutUser = async () => {
+    try {
+      await httpClient.post("//localhost:5000/logout"); // make a request to the logout endpoint
+      window.location.href = "/admin/user-page"; // redirect to the login page
+    } catch (error) {
+      console.error(error);
+      alert("Failed to logout");
+    }
+  };
   return (
     <div className="content" > 
     <Row>
@@ -25,7 +35,8 @@ const AdminPage = () => {
         <Card className="card-user">
           <br/>
           <CardHeader>
-          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Welcome To Admin Page</CardTitle>
+          <Button  className="ml-15" color="primary" onClick={logoutUser}>Déconnecter</Button>
+          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Bienvenue sur la page d'administration</CardTitle>
           </CardHeader>
           <br/>
           <br/>

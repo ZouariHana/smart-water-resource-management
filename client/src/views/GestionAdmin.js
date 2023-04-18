@@ -17,46 +17,19 @@ import {
 
 
 function AgentForm(props) {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState('');
  
 
   const handleSubmit = (event) =>{
     event.preventDefault();
-
-    /*if (props.editingUserId) {
-      // Send a PUT request to the server to update the user
-      fetch(`//localhost:5000/update_user/${props.editingUserId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nom_barrage: nomBarrage,
-          nom: nom,
-          prenom: prenom,
-          email: email,
-          password: JSON.stringify(password)
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Server response:', data);
-        // Update the selected user in the table
-        props.handleEditUser(data);
-        // Clear the form and close the modal
-        setNomBarrage('');
-        setNom('');
-        setPrenom('');
-        setEmail('');
-        setPassword('');
-        props.onClose();
-      })
-      .catch(error => console.error(error));
-    } else {*/
   
     // Send a POST request to the server to create a new agent
-    fetch('//localhost:5000/create_agent', {
+    fetch('//localhost:5000/create_admin', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
       email: email,
       password: JSON.stringify(password)
@@ -82,6 +55,7 @@ function AgentForm(props) {
    .catch(error => console.error(error));
    
   } 
+ 
   
   return (
     <>
@@ -146,12 +120,16 @@ function AgentForm(props) {
 
 const GestionAdmin = () => {
   const [users, setUsers] = useState([]);
+  const [userList, setUserList] = useState([]);
   const [editingUserId, setEditingUserId] = useState(null);
+  const [editedEmail, setEditedEmail] = useState('');
+  const [editedPassword, setEditedPassword] = useState('');
+ 
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const resp = await httpClient.get("//localhost:5000/getAgents");
+        const resp = await httpClient.get("//localhost:5000/getAdmin");
         setUsers(resp.data);
       } catch (error) {
         console.error(error);
@@ -161,7 +139,7 @@ const GestionAdmin = () => {
   }, []);
 
   const DeleteUser = (userId) => {
-    fetch(`http://localhost:5000/deleteAgent/${userId}`, {
+    fetch(`http://localhost:5000/deleteAdmin/${userId}`, {
       method: 'DELETE',
     })
     .then(response => response.json())
@@ -170,27 +148,60 @@ const GestionAdmin = () => {
       // Remove the user from the table
       const updatedUsers = users.filter(user => user.id !== userId);
       setUsers(updatedUsers);
+      alert('Admin has been deleted successfully !')
     })
     .catch(error => console.error(error));
   }
   
- 
-  const handleEditUser = (updatedUser) => {
-      const updatedUsers = users.map((user) =>
-        user.id === updatedUser.id ? updatedUser : user
-      );
-      setUsers(updatedUsers);
-      setEditingUserId(null);
-    };
-    
-  const handleAddUser = (newUser) => {
-      setUsers([...users, newUser]);
-    };
-
-  const handleEditButtonClick = (userId) => {
+  const logoutUser = async () => {
+      try {
+        await httpClient.post("//localhost:5000/logout"); 
+        window.location.href = "/admin/admin-page";
+      } catch (error) {
+        console.error(error);
+        alert("Failed to logout");
+      }
+    };  
+  const handleEditClick = (userId, email, password) => {
       setEditingUserId(userId);
-      
+      setEditedEmail(email);
+      setEditedPassword(password);
     };
+  const handleSaveClick = () => {
+      const updatedUsers = userList.map((user) => {
+        if (user.id === editingUserId) {
+          return {
+            ...user,
+            email: editedEmail,
+            password: editedPassword,
+          };
+        } else {
+          return user;
+        }
+      });
+  
+      setUserList(updatedUsers);
+      setEditingUserId(null);
+      setEditedEmail('');
+      setEditedPassword('');
+      // save the updated users array using your preferred method (e.g. API call, local storage)
+      fetch(`http://localhost:5000/updateAdmin/${editingUserId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: editedEmail,
+          password: editedPassword,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('Server response:', data);
+          alert('admin has been edited successfully !!')
+        })
+        .catch((error) => console.error(error));
+    }
   
    return (
     <>
@@ -199,7 +210,8 @@ const GestionAdmin = () => {
           <Col md="12">
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Gestion des Admins</CardTitle>
+                <Button  className="mr-8Q" color="primary" onClick={logoutUser}>Go Back</Button>
+                <CardTitle tag="h4" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Gestion des Admins</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table responsive>
@@ -218,25 +230,33 @@ const GestionAdmin = () => {
                         <td>{user.email}</td>
                         <td>{user.password}</td>
                         <td>
-                        <Button onClick={() => DeleteUser(user.id)}>Delete</Button>
-                        <Button onClick={() => handleEditButtonClick(user.id)}>Edit</Button>
-                        </td>
-             
-                      </tr>
-                       ))}
+                        <Button  className="btn-round"color="primary" onClick={() => DeleteUser(user.id)}>Delete</Button>
+                        {editingUserId === user.id ? (
+                    <>
+                      <input type="text" value={editedEmail} onChange={(e) => setEditedEmail(e.target.value)} />
+                      <br/> 
+                      <input type="text" value={editedPassword} onChange={(e) => setEditedPassword(e.target.value)} />
+                      <br/>
+                      <Button className="btn-round" color="primary" onClick={handleSaveClick}>Save</Button>
+                    </>
+                  ) : (
+                  <Button className="btn-round"color="primary"onClick={() => handleEditClick(user.id, user.email, user.password)}>Edit</Button>
+                  )}
+                 </td>
+                 </tr>
+                 ))}
                   </tbody>
-                </Table>
+                </Table> 
               </CardBody>
             </Card>
           </Col>
           </Row>
+                  
           <Row>
           <Col md="12">
             <Card className="card-plain">
                <CardBody>
-                <AgentForm editingUserId={editingUserId} 
-                 onAddUser={handleAddUser} 
-                 handleEditUser={handleEditUser} />
+               <AgentForm/>
               </CardBody>
             </Card>
           </Col>
@@ -247,4 +267,4 @@ const GestionAdmin = () => {
   );
  
 };
-export default GestionAdmin 
+export default GestionAdmin  

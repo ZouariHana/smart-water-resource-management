@@ -10,7 +10,7 @@ def get_uuid():
 class Utilisateur(db.Model):
     __tablename__ = 'utilisateur'
     idUser = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    idBarrage = db.Column(db.Integer, ForeignKey('barrage.idBarrage'), nullable=False)
+    idBarrage = db.Column(db.Integer, ForeignKey('barrage.idBarrage'), nullable=False,unique=True)
     Nom = db.Column(db.String(45), nullable=False)
     Prenom = db.Column(db.String(45), nullable=False)
     email = db.Column(db.String(100), nullable=False)
@@ -19,7 +19,7 @@ class Utilisateur(db.Model):
 class Barrage(db.Model):
     __tablename__ = 'barrage'
     idBarrage = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    Nom = db.Column(db.Text, nullable=False)
+    Nom = db.Column(db.Text, nullable=False ,unique=True )
     Bassin = db.Column(db.Integer, nullable=False)
     cote = db.Column(db.Float, nullable=False)
     cap_utile_actuelle = db.Column(db.Float, nullable=False)

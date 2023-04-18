@@ -18,7 +18,7 @@ import {
 function LoginPage () {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  /*const history = useHistory();*/
+ 
   const logInUser = async () => {
     console.log(email, password);
 
@@ -27,16 +27,13 @@ function LoginPage () {
         email,
         password,
       });
-      
-
       // Check response data to determine which page to redirect to
-      if (resp.data.user_type === "utilisateur"){
-        window.location.href ="/admin/agent-page"
-       
-        
+      if (resp.data.user_type === "admin"){
+
+        window.location.href ="/admin/admin-page"
       } 
       else {
-        window.location.href ="/admin/admin-page"  
+        window.location.href ="/admin/agent-page"  
        
       }
 

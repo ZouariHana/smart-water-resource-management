@@ -49,22 +49,14 @@ function Sidebar(props) {
     <div
       className="sidebar"
       data-color={props.bgColor}
+      //style={{ backgroundColor: "#218049" }}
       data-active-color={props.activeColor}
     >
-      <div className="logo">
+      <div className="logo" style={{ textAlign: "center" }}>
         <a
-          href="https://www.creative-tim.com"
-          className="simple-text logo-mini"
+          className="simple-text "style={{ margin: "0 auto" }}
         >
-          <div className="logo-img">
-            <img src={logo} alt="react-logo" />
-          </div>
-        </a>
-        <a
-          href="https://www.creative-tim.com"
-          className="simple-text logo-normal"
-        >
-          Creative Tim
+          MENU 
         </a>
       </div>
       <div className="sidebar-wrapper" ref={sidebar}>

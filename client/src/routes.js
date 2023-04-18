@@ -1,9 +1,9 @@
 
 import Dashboard from "views/Dashboard.js";
 import Notifications from "views/Notifications.js";
-import Icons from "views/Icons.js";
+//import Icons from "views/Icons.js";
 import GeneratedPDF from "views/GeneratedPDF";
-import Maps from "views/Map.js";
+// import Maps from "views/Map.js";
 import UserPage from "views/User.js";
 import DownloadPDF from "views/DownloadPDF";
 import AdminPage from "views/AdminPage.js";
@@ -26,23 +26,23 @@ var routes = [
     component: Dashboard,
     layout: "/admin"
   },
-  {
+  /*{
     path: "/icons",
     name: "Icons",
     icon: "nc-icon nc-diamond",
     component: Icons,
     layout: "/admin"
-  },
-  {
+  },*/
+  /*{
     path: "/maps",
     name: "Maps",
     icon: "nc-icon nc-pin-3",
     component: Maps,
     layout: "/admin"
-  },
+  },*/
   {
     path: "/notifications",
-    name: "Notifications",
+    name: "Prévision",
     icon: "nc-icon nc-bell-55",
     component: Notifications,
     layout: "/admin"
@@ -64,7 +64,7 @@ var routes = [
   },
   {
     path: "/admin-page",
-    name: "Admin Page",
+    name: "Page d'administration",
     component: AdminPage,
     layout: "/admin",
   },

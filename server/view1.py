@@ -4,11 +4,55 @@ from app import app,db
 from Model import  Utilisateur, Barrage,Lachers,Apports,Stocks,Ichkel,Pluv,Admin1,RS
 from flask_session import Session
 from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
+from flask_admin.contrib.sqla import ModelView 
 from datetime import datetime
+from flask_mail import Mail , Message 
+from flask_jwt_extended import jwt_required, get_jwt_identity, JWTManager
+
+
+
+
 
 
 bcrypt = Bcrypt(app)
+
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'imen.rjab@ensi-uma.tn'
+app.config['MAIL_PASSWORD'] = '26648680'
+app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
+jwt = JWTManager(app)
+
+mail=Mail(app)
+
+
+@app.route('/send-email', methods=['POST'])
+def send_email():
+    admin_email = request.json.get('adminEmail')
+    admin_password = request.json.get('adminPassword')
+    recipient_email = request.json.get('recipientEmail')
+    recipient_password = request.json.get('recipientPassword')
+    
+    if not all([admin_email, admin_password, recipient_email, recipient_password]):
+        return jsonify({'error': 'Missing email or password parameters.'}), 400
+    
+    
+    subject = 'Login Credentials for Agent Account'
+    body = f"Dear Agent,\n\nYour login credentials are as follows:\nEmail: {recipient_email}\nPassword: {recipient_password}\n\nPlease use these credentials to log in as an agent.\n\nBest regards,\nThe Admin Team"
+    
+    message = Message(subject, sender=admin_email, recipients=[recipient_email])
+    message.body = body
+
+    try:
+        with app.app_context():
+            mail.send(message)
+            return jsonify({'message': 'Email sent successfully!'})
+    except Exception as e:
+        print(str(e))
+        return jsonify({'error': 'Failed to send email.'}), 500  
+
 
 
 
@@ -42,7 +86,7 @@ def get_current_user():
     
 @app.route("/gestionAgent",methods=["POST"])
 def taches_agent():
-    nom_barrage   = request.json["nom_barrage"]  
+    nomBarrage   = request.json["nomBarrage"]  
     valeur_lacher = request.json["valeur_lacher"]
     utilisation = request.json["utilisation"]
     valeur_apport = request.json["valeur_apport"]
@@ -54,7 +98,7 @@ def taches_agent():
     date_obj = datetime.strptime(date, '%d-%m-%Y')
     formatted_date = date_obj.strftime('%Y-%m-%d')
 
-    identique = Barrage.query.filter(Barrage.Nom == nom_barrage).first()
+    identique = Barrage.query.filter(Barrage.Nom == nomBarrage).first()
     if identique is None:
       return jsonify({"error": "Le barrage n'existe pas."}), 409
     else:
@@ -132,10 +176,16 @@ def register_user():
     
     session["user_id"] = new_user.idAdmin
     
-   
-
-
     
+@app.route("/admin/agent-page")
+def agent_page():
+    barrage_id = session.get("barrage_id")
+    barrage = Barrage.query.get(barrage_id)
+    if not barrage:
+        return "Barrage not found."
+    return render_template("agent-page.html", barrage_nom=barrage.Nom)
+
+
 
 @app.route("/login", methods=["POST"])
 def login_user():
@@ -145,29 +195,50 @@ def login_user():
     admin = Admin1.query.filter_by(email=email).first()
     if admin:
         if not bcrypt.check_password_hash(admin.password, password):
-            return jsonify({"error": "Unauthorized"}), 400
+            return jsonify({"error": "Unauthorized"}), 401
         session["admin_id"] = admin.idAdmin
         return jsonify({
             "id": admin.idAdmin,
             "email": admin.email,
-            "user_type": "admin"
+            "user_type": "admin" 
         }),200  
 
     user = Utilisateur.query.filter_by(email=email).first()
     if user:
-        if not bcrypt.check_password_hash(user.password,password):
+        if user.password != password:
             return jsonify({"error": "Unauthorized"}), 401
-        session["user_id"] = user.idUser
+        session["user_id"] = user.idUser 
         return jsonify({
             "id": user.idUser,
             "email": user.email,
             "user_type": "utilisateur"
         }),200
 
-    return jsonify({"error": "Unauthorized"}), 401
+    return jsonify({"error": "Unauthorized"}), 401 
 
- 
- 
+
+
+@app.route('/agent', methods=['GET'])
+def get_agent_info():
+    idUser = session.get('user_id')
+    if idUser is None:
+        return jsonify({'error': 'Not logged in'}), 401
+
+    agent = Utilisateur.query.filter_by(idUser=idUser).first()
+    if not agent:
+        return jsonify({'error': 'Agent not found'}), 404
+
+    barrage = Barrage.query.filter_by(idBarrage=agent.idBarrage).first()
+    return jsonify({
+        'idUser': agent.idUser,
+        'nom': agent.Nom,
+        'prenom': agent.Prenom,
+        'email': agent.email,
+        'idBarrage': agent.idBarrage,
+        'nomBarrage': barrage.Nom if barrage else None
+    }), 200
+    
+
 @app.route("/getAgents", methods=["GET"])
 def get_agents():
     users = Utilisateur.query.all()
@@ -184,37 +255,69 @@ def get_agents():
         }
         result.append(agent_data)
     return jsonify(result)
- 
+
+@app.route("/getAdmin", methods=["GET"])
+def get_admin():
+    users = Admin1.query.all()
+    result = []
+    for user in users:
+        admin_data = {
+            "id": user.idAdmin,
+            "email": user.email,
+            "password":user.password,
+            # Add any other fields you want to include in the response
+        }
+        result.append(admin_data)
+    return jsonify(result)
+
+
+@app.route('/Barrage/<int:idBarrage>', methods=['GET'])
+def get_barrage(idBarrage):
+    barrage = Barrage.query.get_or_404(idBarrage)
+    barrage_data = {
+        'idBarrage': barrage.idBarrage,
+        'Nom': barrage.Nom,
+        'Bassin': barrage.Bassin,
+        'cote': barrage.cote,
+        'cap_utile_actuelle': barrage.cap_utile_actuelle,
+        'AnneeMiseEnService': barrage.AnneeMiseEnService,
+        'Latitude': barrage.Latitude,
+        'Longitude': barrage.Longitude,
+        'volume_regul_calcule': barrage.volume_regul_calcule,
+        'debit': barrage.debit,
+        'idRegion': barrage.idRegion,
+        # Add any other fields you want to include in the response
+    }
+    return jsonify(barrage_data)
  
  
  
 @app.route("/updateAgent/<int:user_id>", methods=["PUT"])
 def update_agent(user_id):
     user = Utilisateur.query.get(user_id)
-    nom_barrage = request.json.get("Nom Barrage")
-    nom = request.json.get("Nom")
-    prenom = request.json.get("Prénom")
+    nom_barrage = request.json.get("nom_barrage")
+    nom = request.json.get("nom")
+    prenom = request.json.get("prenom")
     email = request.json.get("email")
     password = request.json.get("password")
     
-    if nom_barrage:
+    if nom_barrage is not None:
         identique = Barrage.query.filter(Barrage.Nom == nom_barrage).first()
         if identique is None:
             return jsonify({"error": "Le barrage n'existe pas."}), 409
         user.idBarrage = identique.idBarrage
     
-    if nom:
+    if nom is not None:
         user.Nom = nom
     
-    if prenom:
+    if prenom is not None:
         user.Prenom = prenom
     
-    if email:
+    if email is not None:
         user.email = email
     
-    if password:
-        hashed_password = bcrypt.generate_password_hash(password)
-        user.password = hashed_password
+    if password is not None:
+        user.password = password
     
     db.session.commit()
     flash('Agent Updated Successfully')
@@ -249,7 +352,7 @@ def create_agent():
         Nom=nom,
         Prenom=prenom,
         email=email,
-        password=bcrypt.generate_password_hash(password)
+        password=password
     )
     
     # Add the new agent to the database
@@ -263,6 +366,35 @@ def create_agent():
         'nom': new_agent.Nom,
         'prenom': new_agent.Prenom
     }), 201
+    
+    
+    
+
+@app.route('/create_admin', methods=['POST'])
+def create_admin():
+    email = request.json.get('email')
+    password = request.json.get('password')
+    
+    # Check if email already exists
+    user_exists = Admin1.query.filter_by(email=email).first() is not None
+    if user_exists:
+        return jsonify({'error': 'Admin already exists'}), 409
+    
+    # Create the new agent
+    new_admin = Admin1(
+        email=email,
+        password=bcrypt.generate_password_hash(password)   
+    )
+    
+    # Add the new agent to the database
+    db.session.add(new_admin)
+    db.session.commit()
+    
+    return jsonify({
+        'id': new_admin.idAdmin,
+        'email': new_admin.email,
+    }), 201
+
 
 
 # Delete an existing user
@@ -279,16 +411,46 @@ def delete_agent(user_id):
     return jsonify({
         "message":"User deleted successfully"
     }), 200
-  
+    
+
+@app.route("/deleteAdmin/<int:user_id>", methods=["DELETE"])
+def delete_admin(user_id):
+    user = Admin1.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Admin not found"}), 404
+    
+    db.session.delete(user)
+    db.session.commit() 
+    
+    flash('Admin deleted successfully')
+    return jsonify({
+        "message":"Admin deleted successfully"
+    }), 200
+
+@app.route("/updateAdmin/<int:user_id>", methods=["PUT"])
+def update_admin(user_id):
+    user = Admin1.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Admin not found"}), 404
+    
+    data = request.json
+    user.email = data.get('email')
+    user.password = data.get('password')
+    
+    db.session.commit() 
+    
+    flash('Admin updated successfully')
+    return jsonify({
+        "message":"Admin updated successfully"
+    }), 200
+
 
 
 @app.route("/logout", methods=["POST"])
 def logout_user():
-    session.pop("user_id")
+    if "user_id" in session:
+        session.pop("user_id")
     return "200"
-
-if __name__ == "__main__":
-    app.run(debug=True)
 
 @app.route('/barrages')
 def situation1():
@@ -308,3 +470,6 @@ def situation1():
             'Longitude': row[2],
         })
     return jsonify(json_data)
+
+if __name__ == "__main__":
+    app.run(debug=True)

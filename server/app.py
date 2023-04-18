@@ -5,7 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS 
 from dotenv import load_dotenv
 import os
-import redis
+import redis 
+
+
 
 app = Flask(__name__)
 
@@ -18,7 +20,11 @@ class ApplicationConfig:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
+<<<<<<< Updated upstream
     SQLALCHEMY_DATABASE_URI = 'mysql://root:11139598@localhost/pcd'
+=======
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:pcdpcdimen@localhost/pcd'
+>>>>>>> Stashed changes
 
     SESSION_TYPE = "redis"
     SESSION_PERMANENT = False
@@ -40,6 +46,8 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+
+
     
 from view1 import * 
 from viewsPDFDownload import *
