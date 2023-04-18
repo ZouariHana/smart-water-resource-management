@@ -130,6 +130,7 @@ useEffect(() => {
                      type="text"
                      value={date}
                      onChange={(e) => setdate(e.target.value)}
+                     placeholder="DD-MM-YYYY"
                      id=""
                     />
                   </FormGroup>

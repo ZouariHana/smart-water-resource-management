@@ -20,11 +20,8 @@ class ApplicationConfig:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
-<<<<<<< Updated upstream
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:11139598@localhost/pcd'
-=======
     SQLALCHEMY_DATABASE_URI = 'mysql://root:pcdpcdimen@localhost/pcd'
->>>>>>> Stashed changes
+
 
     SESSION_TYPE = "redis"
     SESSION_PERMANENT = False
