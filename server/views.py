@@ -5,7 +5,7 @@ from datetime import datetime
 from Model import *
 from app import app,db
 from app import *
-from datetime import date
+from datetime import date, timedelta
 from sqlalchemy import func
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta
@@ -14,7 +14,7 @@ def get_stocks(dam_id, date):
     try:
         print(dam_id)
         date_object = datetime.strptime(date, '%d-%m-%Y')
-        start_date = datetime(date_object.year, 1, 1)
+        start_date = date_object - timedelta(days=3*30)
         end_date = datetime(date_object.year,date_object.month,date_object.day)
         if dam_id == 'Tous les barrages':
         # Retrieve the sum of data for all dams
@@ -118,7 +118,10 @@ def get_taux(dam_id, date):
         capacity = Decimal(capacity)
         taux = (stock/capacity)*100
         taux = round(taux, 1)
-        return ([taux])
+        stock = round(stock, 1)
+        capacity = round(capacity, 1)
+        response =[taux, stock,capacity]
+        return (response)
 
 @app.route('/lacher/<dam_id>/<date>')
 def get_lacher(dam_id, date):
@@ -219,3 +222,15 @@ def get_apport(dam_id, date):
         return ([apport1, apport2])
     except Exception as e:
         return ({"error": str(e)})
+    
+@app.route('/lacherIchkeul/<date>')
+def get_ichkeul(date):
+    date_obj = datetime.strptime(date, '%d-%m-%Y')
+    date_str = date_obj.strftime('%Y-%m-%d')
+    list_ichkeul =[]
+    ichkeul = db.session.query(Ichkel.valeur_lachIch).filter(Ichkel.Date_LachIch==date_str).scalar()
+    if ichkeul is None:
+        list_ichkeul.append('-')
+    else:
+        list_ichkeul.append(str(ichkeul))
+    return(list_ichkeul)

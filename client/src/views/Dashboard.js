@@ -6,7 +6,11 @@ import axios from "axios";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../assets/css/map.css'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faWater } from '@fortawesome/free-solid-svg-icons'
+import {faArrowUpFromGroundWater} from '@fortawesome/free-solid-svg-icons';
+import {faHandHoldingDroplet} from '@fortawesome/free-solid-svg-icons';
+import {faPercent} from '@fortawesome/free-solid-svg-icons';
 // react plugin used to create charts
 import { Line, Pie, Bar } from "react-chartjs-2";
 // reactstrap components
@@ -27,17 +31,56 @@ import {
 } from "variables/charts.js";
 function Dashboard() {
   const [value, onChange] = useState(new Date());
-  const [damId, setDamId] = useState("1");
   const [data1, setData1] = useState([]);
+  const [damId, setDamId] = useState(1);
   // const [data2, setData2] = useState([]);
   const [remplissage, setRemplissage] = useState(0);
+  const [stock, setStock] = useState(0);
+  const [capacity, setCapacity] = useState(0);
   const [exp, setExp] = useState([]);
   const [lacher, setLacher] = useState([]);
   const [apport, setApport] = useState([]);
-  const [ichkeul, setIchkeul] = useState(0);
+  const [ichkeul, setIchkeul] = useState('-');
 
   const [barrages, setBarrages] = useState([]);
-  
+  const damDictionary = {
+    'MELLEGUE': 1,
+    'SARRAT': 36,
+    'BENMETIR': 2,
+    'KASSEB': 3,
+    'BARBARA': 4,
+    'SIDISALEM': 5,
+    'BOU-HEURTMA': 6,
+    'JOUMINE': 7,
+    'GHEZALA': 8,
+    'MELAH': 33,
+    'TINE': 34,
+    'SEJNANE': 9,
+    'Zarga': 10,
+    'Kebir': 31,
+    'Moula': 32,
+    'S.ELBARRAK': 11,
+    'Ziatine': 12,
+    'Gamgoum': 13,
+    'Harka': 35,
+    'SILIANA': 14,
+    'LAKHMESS': 15,
+    'RMIL': 16,
+    "BIRM'CHERGA": 17,
+    'RMEL': 18,
+    'NEBHANA': 19,
+    'SIDISAAD': 20,
+    'ELHAOUAREB': 21,
+    'Sficifa': 22,
+    'SIDIAÏCH': 23,
+    'ELBREK': 24,
+    'BEZIRK': 25,
+    'CHIBA': 26,
+    'MASRI': 27,
+    'LEBNA': 28,
+    'HMA': 29,
+    'ABID': 30,
+  };
   // fetch barrage locations from Flask API endpoint
   useEffect(() => {
     axios.get('http://localhost:5000/barrages').then(response => {
@@ -85,6 +128,12 @@ function Dashboard() {
         console.log(response.data);
         setExp(response.data)
       })
+      axios
+      .get(`http://localhost:5000/lacherIchkeul/${formattedDate}`)
+      .then((response) => {
+        console.log(response.data);
+        setIchkeul(response.data);
+      })
   
   }
   ,[value]);
@@ -114,6 +163,8 @@ function Dashboard() {
       .get(`http://localhost:5000/tauxRemplissage/${damId}/${formattedDate}`)
       .then((response) => {
         setRemplissage(response.data[0]); 
+        setStock(response.data[1]);
+        setCapacity(response.data[2]);
         console.log(response.data)
       })
       .catch((error) => {
@@ -147,14 +198,12 @@ function Dashboard() {
   const stockValues1 = data1.map((item) => item.Valeur_Stock);
   // const stockValues2 = data2.map((item) => item.Valeur_Stock);
   console.log(data1)
-  const handleDamChange = (e) => {
-    const value = e.target.value;
-      setDamId(value);
+
+  const handleDamChange = (event) => {
+    const selectedName = event.target.value;
+    const selectedId = damDictionary[selectedName];
+    setDamId(selectedId);
   };
-  const options = [];
-  for (let i = 1; i <= 36; i++) {
-    options.push(<option value={i}>{i}</option>);
-  }
 
   return (
     <>
@@ -167,7 +216,11 @@ function Dashboard() {
       </CardHeader>
         <CardBody>
         <select onChange={handleDamChange}>
-          {options}
+        {Object.keys(damDictionary).map((name) => (
+          <option key={name} value={name}>
+            {name}
+          </option>
+        ))}
           <option>Barrages ST Nord</option>
           <option>Barrages ST Centre</option>
           <option>Barrages ST Cap-Bon</option>
@@ -208,11 +261,11 @@ function Dashboard() {
         <Row>
           <Col lg="3" md="6" sm="6">
             <Card className="card-stats">
-              <CardBody>
+              <CardBody style={{ height: '105px' }}>
                 <Row>
                   <Col md="4" xs="5">
                     <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-globe text-warning" />
+                    <FontAwesomeIcon icon={faPercent} style={{color: "6bd098",}}/>
                     </div>
                   </Col>
                   <Col md="7" xs="7">
@@ -228,11 +281,51 @@ function Dashboard() {
           </Col>
           <Col lg="3" md="6" sm="6">
             <Card className="card-stats">
-              <CardBody>
+              <CardBody style={{ height: '105px' }}>
                 <Row>
                   <Col md="4" xs="5">
                     <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-money-coins text-success" />
+                    <FontAwesomeIcon icon={faArrowUpFromGroundWater} style={{color: "#fcc468",}} />
+                    </div>
+                  </Col>
+                  <Col md="8" xs="7">
+                    <div className="numbers">
+                      <p className="card-category">Stock</p>
+                      <CardTitle tag="p">{stock}</CardTitle>
+                      <p />
+                    </div>
+                  </Col>
+                </Row>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="3" md="6" sm="6">
+            <Card className="card-stats">
+              <CardBody style={{ height: '105px' }}>
+                <Row>
+                  <Col md="4" xs="5">
+                    <div className="icon-big text-center icon-warning">
+                    <FontAwesomeIcon icon={faHandHoldingDroplet} style={{color: "#ef8157",}}/>
+                    </div>
+                  </Col>
+                  <Col md="8" xs="7">
+                    <div className="numbers">
+                      <p className="card-category">Capacité actuelle utile</p>
+                      <CardTitle tag="p">{capacity}</CardTitle>
+                      <p />
+                    </div>
+                  </Col>
+                </Row>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="3" md="6" sm="6">
+            <Card className="card-stats">
+              <CardBody style={{ height: '105px' }}>
+                <Row>
+                  <Col md="4" xs="5">
+                    <div className="icon-big text-center icon-warning">
+                    <FontAwesomeIcon icon={faWater} style={{color: "#4acccd",}} />
                     </div>
                   </Col>
                   <Col md="8" xs="7">
@@ -250,7 +343,7 @@ function Dashboard() {
         </Row>
         <Row>
           <Col md="6">
-            <Card>
+            <Card style={{ width: "38vw" }}>
               <CardHeader>
                 <CardTitle tag="h5">Lâchers du jour</CardTitle>
                 <p className="card-category"></p>
@@ -265,7 +358,7 @@ function Dashboard() {
          
           </Col>
           <Col md="6">
-            <Card>
+            <Card style={{ width: "38vw" }}>
               <CardHeader>
                 <CardTitle tag="h5">Apports du jour</CardTitle>
                 <p className="card-category"></p>
@@ -282,21 +375,27 @@ function Dashboard() {
         </Row>
         <Row>
           <Col md="4">
-            <Card>
+            <Card style={{ height: '620px' }}>
               <CardHeader>
                 <CardTitle tag="h5">Exploitation des lâchers</CardTitle>
                 <p className="card-category">Répartition de l'exploitation des Lâchers le {value.toLocaleDateString('en-GB').replace(/\//g, '-')}</p>
               </CardHeader>
-              <CardBody style={{ height: "380px" }}>
+              <CardBody>
                 <Pie
                   data={dashboardEmailStatisticsChart(exp).data}
                   options={dashboardEmailStatisticsChart(exp).options}
                 />
               </CardBody>
+              <CardFooter>
+                <hr />
+                <div className="card-stats">
+                  <i className="fa fa-check" /> D : Déversement, E : Exploitation, tr : Transfert, a : déstockage pour abaissement du plan d'eau, d : dévasement, T : Turbinage, P : fuite de drainage
+                </div>
+              </CardFooter>
             </Card>
           </Col>
-          <Col md="8">
-          <Card className="card-chart">
+      <Col md="8">
+        <Card className="card-chart" style={{ height: '620px' }}>
       <CardHeader>
         <CardTitle tag="h5">Courbe de variation de Stock</CardTitle>
         <p className="card-category">Line Chart with Points</p>
@@ -307,10 +406,16 @@ function Dashboard() {
                   data={dashboardNASDAQChart(dateValues,stockValues1).data}
                   options={dashboardNASDAQChart(dateValues,stockValues1).options}
                   width={400}
-                  height={100}
+                  height={200}
                 />
   
       </CardBody>
+      <CardFooter>
+          <hr />
+          <div className="card-stats">
+            <i className="fa fa-check" /> Evolution du stock pendant les trois mois précédant le {value.toLocaleDateString('en-GB').replace(/\//g, '-')}
+          </div>
+      </CardFooter>
     </Card>
           </Col>
         </Row>

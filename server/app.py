@@ -18,7 +18,7 @@ class ApplicationConfig:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
-    SQLALCHEMY_DATABASE_URI = 'mysql://root@localhost/pcd'
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:11139598@localhost/pcd'
 
     SESSION_TYPE = "redis"
     SESSION_PERMANENT = False

@@ -48,7 +48,6 @@ function GeneratedPDF() {
               </CardHeader>
               <CardBody>
                 <div className="typography-line">
-                  
                   <blockquote>
                     <p className="blockquote blockquote-primary">
                     <form>
@@ -62,7 +61,6 @@ function GeneratedPDF() {
                           ))}
                         </select>
                       </label>
-
                       <Link to={`/admin/DownloadPDF/${selectedDate}`}>
                         <button className="btn-round"
                         color="primary" type="submit" style={{ margin: '10px' }}>Génération du PDF </button>

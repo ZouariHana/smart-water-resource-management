@@ -1,12 +1,6 @@
 function generateRandomColors(n) {
-  const colorPalette = ["#e3e3e3", "#4acccd", "#fcc468", "#ef8157"]
-  const colors = [];
-  for (let i = 0; i < n; i++) {
-    const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-    if (!colors.includes(color)) {
-      colors.push(color);
-    }
-  }
+  const colorPalette = ["#e3e3e3", "#4acccd", "#fcc468", "#ef8157", "#6bd098","#407d25","#b4a7d6","0b5394"]
+  const colors = colorPalette.splice(0,n);
   return colors;
 }
 
@@ -91,9 +85,9 @@ const dashboardNASDAQChart = (labels, dataset1)=> {
           borderColor: "#fbc658",
           backgroundColor: "transparent",
           pointBorderColor: "#fbc658",
-          pointRadius: 0.25,
-          pointHoverRadius: 0.25,
-          pointBorderWidth: 0.5,
+          pointRadius: 2,
+          pointHoverRadius: 2,
+          pointBorderWidth: 1,
           tension: 0.4
         }
 
