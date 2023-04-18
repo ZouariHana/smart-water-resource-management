@@ -46,7 +46,7 @@ const lacherChart=(date, value1, value2) => {
 };
 
 
-const dashboardEmailStatisticsChart=(exploitation) => {
+const exploitationPieChart=(exploitation) => {
   const keys = Object.keys(exploitation);
   const values = Object.values(exploitation);
   return{
@@ -70,7 +70,7 @@ const dashboardEmailStatisticsChart=(exploitation) => {
 }
 };
 
-const dashboardNASDAQChart = (labels, dataset1)=> {
+const evolutionLineChart = (labels, dataset1)=> {
 
   return{
   data: (canvas) => {
@@ -124,7 +124,7 @@ const dashboardNASDAQChart = (labels, dataset1)=> {
 };
 
 module.exports = {
-  dashboardEmailStatisticsChart,
-  dashboardNASDAQChart,
+  exploitationPieChart,
+  evolutionLineChart,
   lacherChart
 };

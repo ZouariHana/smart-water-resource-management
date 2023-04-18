@@ -68,17 +68,16 @@ def get_exploitation(date):
 @app.route('/pourcentageexp/<date>')
 def get_pourcentage(date):
      listExp = get_exploitation(date)
-
+     list= []
      for elem in listExp:
         if ',' in elem:
         # Split the element into separate elements using the comma as a delimiter
          split_elems = elem.split(',')
         # Add the resulting elements to the list
-         listExp.extend(split_elems)
-        
-        # Remove the original fused element
-         listExp.remove(elem)
-     dict_counts = {elem: listExp.count(elem)/len(listExp) for elem in listExp}
+         list.extend(split_elems)
+        else:
+         list.extend(elem)
+     dict_counts = {elem: list.count(elem)/len(list) for elem in list}
      return(dict_counts)
 
 @app.route('/tauxRemplissage/<dam_id>/<date>')

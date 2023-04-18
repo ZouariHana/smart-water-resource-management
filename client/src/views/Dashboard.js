@@ -25,8 +25,8 @@ import {
 } from "reactstrap";
 // core components
 import {
-  dashboardEmailStatisticsChart,
-  dashboardNASDAQChart,
+  exploitationPieChart,
+  evolutionLineChart,
   lacherChart
 } from "variables/charts.js";
 function Dashboard() {
@@ -383,8 +383,8 @@ function Dashboard() {
               </CardHeader>
               <CardBody>
                 <Pie
-                  data={dashboardEmailStatisticsChart(exp).data}
-                  options={dashboardEmailStatisticsChart(exp).options}
+                  data={exploitationPieChart(exp).data}
+                  options={exploitationPieChart(exp).options}
                 />
               </CardBody>
               <CardFooter>
@@ -404,8 +404,8 @@ function Dashboard() {
       <CardBody>
         <Line
                   datasetIdKey='id'
-                  data={dashboardNASDAQChart(dateValues,stockValues1).data}
-                  options={dashboardNASDAQChart(dateValues,stockValues1).options}
+                  data={evolutionLineChart(dateValues,stockValues1).data}
+                  options={evolutionLineChart(dateValues,stockValues1).options}
                   width={400}
                   height={200}
                 />
