@@ -36,6 +36,7 @@ function Dashboard() {
   // const [data2, setData2] = useState([]);
   const [remplissage, setRemplissage] = useState(0);
   const [stock, setStock] = useState(0);
+  const [monthNumbers, setMonthNumbers] = useState(1);
   const [capacity, setCapacity] = useState(0);
   const [exp, setExp] = useState([]);
   const [lacher, setLacher] = useState([]);
@@ -141,24 +142,7 @@ function Dashboard() {
     const lastYearDate = new Date(value.getFullYear() - 1, value.getMonth(), value.getDate());
     const formattedDate = value.toLocaleDateString('en-GB').replace(/\//g, '-');
     const formattedDate2 = lastYearDate.toLocaleDateString('en-GB').replace(/\//g, '-');
-    axios
-      .get(`http://localhost:5000/stocks/${damId}/${formattedDate}`)
-      .then((response) => {
-        setData1(response.data['stocks']);
-        console.log(response.data)
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-      // axios
-      // .get(`http://localhost:5000/stocks/${damId}/${formattedDate2}`)
-      // .then((response) => {
-      //   setData2(response.data['stocks']);
-      //   console.log(response.data)
-      // })
-      // .catch((error) => {
-      //   console.log(error);
-      // });
+   
       axios
       .get(`http://localhost:5000/tauxRemplissage/${damId}/${formattedDate}`)
       .then((response) => {
@@ -189,6 +173,19 @@ function Dashboard() {
         console.log(error);
       });
   }, [value, damId]);
+
+  useEffect(() => {
+    const formattedDate = value.toLocaleDateString('en-GB').replace(/\//g, '-');
+    axios
+      .get(`http://localhost:5000/stocks/${damId}/${formattedDate}/${monthNumbers}`)
+      .then((response) => {
+        setData1(response.data['stocks']);
+        console.log(response.data)
+      })
+      .catch((error) => {
+        console.log(error);
+      });}, [value, damId, monthNumbers]);
+
   const dateValues = data1.map((item) => {
     const dateParts = item.Date_Stock.split('-');
     const month = dateParts[1];
@@ -203,6 +200,10 @@ function Dashboard() {
     const selectedName = event.target.value;
     const selectedId = damDictionary[selectedName];
     setDamId(selectedId);
+  };
+  const handleNumberChange = (event) => {
+     setMonthNumbers(event.target.value);
+    
   };
 
   return (
@@ -413,7 +414,22 @@ function Dashboard() {
       <CardFooter>
           <hr />
           <div className="card-stats">
-            <i className="fa fa-check" /> Evolution du stock pendant les trois mois précédant le {value.toLocaleDateString('en-GB').replace(/\//g, '-')}
+            <i className="fa fa-check" /> Evolution du stock pendant les 
+            <select name="numbers"onChange={handleNumberChange} >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+            </select> 
+            mois précédant le {value.toLocaleDateString('en-GB').replace(/\//g, '-')}
           </div>
       </CardFooter>
     </Card>

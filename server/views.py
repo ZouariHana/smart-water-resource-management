@@ -9,12 +9,12 @@ from datetime import date, timedelta
 from sqlalchemy import func
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta
-@app.route('/stocks/<dam_id>/<date>')
-def get_stocks(dam_id, date):
+@app.route('/stocks/<dam_id>/<date>/<month_numbers>')
+def get_stocks(dam_id, date, month_numbers):
     try:
         print(dam_id)
         date_object = datetime.strptime(date, '%d-%m-%Y')
-        start_date = date_object - timedelta(days=3*30)
+        start_date = date_object - timedelta(days=int(month_numbers)*30)
         end_date = datetime(date_object.year,date_object.month,date_object.day)
         if dam_id == 'Tous les barrages':
         # Retrieve the sum of data for all dams
@@ -84,7 +84,7 @@ def get_pourcentage(date):
 @app.route('/tauxRemplissage/<dam_id>/<date>')
 def get_taux(dam_id, date):
         print(dam_id)
-        response = get_stocks(dam_id, date)
+        response = get_stocks(dam_id, date,1)
         print("Hello HELLO:", response) 
         if "stocks" not in response:
             raise ValueError("Response does not contain 'stocks' key")
