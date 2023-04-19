@@ -64,7 +64,7 @@ function AgentForm(props) {
          <Col className ="content mx-auto " md="8">
             <Card className="card-user">
           <CardHeader>
-          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Ajouter Un Admin </CardTitle>
+          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Ajouter Un Administrateur </CardTitle>
           </CardHeader>
           <CardBody>
             <Form >
@@ -210,7 +210,7 @@ const GestionAdmin = () => {
           <Col md="12">
             <Card>
               <CardHeader>
-                <Button  className="mr-8Q" color="primary" onClick={logoutUser}>Go Back</Button>
+                <Button  className="mr-8Q" color="primary" onClick={logoutUser}>Précédent</Button>
                 <CardTitle tag="h4" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Gestion des Admins</CardTitle>
               </CardHeader>
               <CardBody>
@@ -219,7 +219,7 @@ const GestionAdmin = () => {
                     <tr>
                       <th>ID Admin</th>
                       <th>Email</th>
-                      <th>Password</th>   
+                      <th>Mot De Passe</th>   
                       <th>Options</th>
                     </tr>
                   </thead>
@@ -230,7 +230,7 @@ const GestionAdmin = () => {
                         <td>{user.email}</td>
                         <td>{user.password}</td>
                         <td>
-                        <Button  className="btn-round"color="primary" onClick={() => DeleteUser(user.id)}>Delete</Button>
+                        <Button  className="btn-round"color="primary" onClick={() => DeleteUser(user.id)}>Supprimer</Button>
                         {editingUserId === user.id ? (
                     <>
                       <input type="text" value={editedEmail} onChange={(e) => setEditedEmail(e.target.value)} />
@@ -240,7 +240,7 @@ const GestionAdmin = () => {
                       <Button className="btn-round" color="primary" onClick={handleSaveClick}>Save</Button>
                     </>
                   ) : (
-                  <Button className="btn-round"color="primary"onClick={() => handleEditClick(user.id, user.email, user.password)}>Edit</Button>
+                  <Button className="btn-round"color="primary"onClick={() => handleEditClick(user.id, user.email, user.password)}>Modifier</Button>
                   )}
                  </td>
                  </tr>

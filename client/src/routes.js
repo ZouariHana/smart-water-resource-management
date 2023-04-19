@@ -43,7 +43,7 @@ var routes = [
   {
     path: "/notifications",
     name: "Prévision",
-    icon: "nc-icon nc-bell-55",
+    icon: "nc-icon nc-chart-bar-32",
     component: Notifications,
     layout: "/admin"
   },

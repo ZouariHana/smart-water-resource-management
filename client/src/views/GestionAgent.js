@@ -331,7 +331,7 @@ const GestionAgent = () => {
           <Col md="12">
             <Card>
               <CardHeader>
-                <Button  className="ml-15" color="primary" onClick={logoutUser}>Go back</Button>
+                <Button  className="ml-15" color="primary" onClick={logoutUser}>Précédent</Button>
                 <CardTitle tag="h4" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Gestion des Agents</CardTitle>
               </CardHeader>
               <CardBody>
@@ -343,7 +343,7 @@ const GestionAgent = () => {
                       <th>Nom</th>
                       <th>Prénom</th>
                       <th>Email</th>
-                      <th>Password</th>   
+                      <th>Mot De Passe</th>   
                       <th>Options</th>
                     </tr>
                   </thead>
@@ -357,7 +357,7 @@ const GestionAgent = () => {
                         <td>{user.email}</td>
                         <td>{user.password}</td>
                         <td>
-                        <Button className="btn-round"color="primary" onClick={() => DeleteUser(user.id)}>Delete</Button>
+                        <Button className="btn-round"color="primary" onClick={() => DeleteUser(user.id)}>Supprimer</Button>
                         {editingUserId === user.id ? (
                     <>
                       <input type="text" value={editedBarrage} onChange={(e) => setEditedBarrage(e.target.value)} />
@@ -373,11 +373,11 @@ const GestionAgent = () => {
                       <Button className="btn-round" color="primary" onClick={handleSaveClick}>Save</Button>
                     </>
                   ) : (
-                  <Button className="btn-round"color="primary"onClick={() => handleEditClick(user.id,user.idBarrage,user.Nom,user.Prénom,user.email, user.password)}>Edit</Button>
+                  <Button className="btn-round"color="primary"onClick={() => handleEditClick(user.id,user.idBarrage,user.Nom,user.Prénom,user.email, user.password)}>Modifier</Button>
                   )}
                   <Button className="btn-round" color="primary" onClick={() => {
                       sendEmail(user.email, user.password);
-                      }}>Send Email</Button>
+                      }}>Envoyer Email</Button>
 
                         </td>
              
