@@ -1,11 +1,10 @@
 from flask import Flask
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 from Model import *
 from app import app,db
 from app import *
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 from sqlalchemy import func
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta

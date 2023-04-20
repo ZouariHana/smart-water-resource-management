@@ -2,10 +2,11 @@ from flask import jsonify, Flask, request, make_response
 from app import app,db
 from Model import *
 import pdfkit
-
+from datetime import datetime
 
 @app.route('/barrage/<date>')
 def situation(date):
+    date_object = datetime.strptime(date, '%d-%m-%Y')
     data = db.session.query(
         Barrage.Nom,
         Barrage.AnneeMiseEnService,
@@ -22,11 +23,11 @@ def situation(date):
         Pluv.valeur_Pluv,
         RS.valeur_RS
     ).join(Region).join(Apports).join(Lachers).join(Stocks).outerjoin(Pluv).outerjoin(RS).filter(
-        Stocks.Date_Stock == date,
-        Lachers.date_lacher == date,
-        Apports.date_apport == date,
-        (Pluv.date_Pluv == date) | (Pluv.date_Pluv == None),
-        (RS.date_RS == date) | (RS.date_RS == None),
+        Stocks.Date_Stock == date_object,
+        Lachers.date_lacher == date_object,
+        Apports.date_apport == date_object,
+        (Pluv.date_Pluv == date_object) | (Pluv.date_Pluv == None),
+        (RS.date_RS == date_object) | (RS.date_RS == None),
     ).all()
 
     json_data = []

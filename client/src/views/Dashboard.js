@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import axios from "axios";
+import ReactDOMServer from 'react-dom/server';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../assets/css/map.css'
@@ -29,6 +30,7 @@ import {
   evolutionLineChart,
   lacherChart
 } from "variables/charts.js";
+
 function Dashboard() {
   const [value, onChange] = useState(new Date());
   const [data1, setData1] = useState([]);
@@ -42,7 +44,7 @@ function Dashboard() {
   const [lacher, setLacher] = useState([]);
   const [apport, setApport] = useState([]);
   const [ichkeul, setIchkeul] = useState('-');
-
+  const [dataPDF, setDataPDF] = useState([]);
   const [barrages, setBarrages] = useState([]);
   const damDictionary = {
     'MELLEGUE': 1,
@@ -135,6 +137,12 @@ function Dashboard() {
         console.log(response.data);
         setIchkeul(response.data);
       })
+      axios.get(`http://localhost:5000/barrage/${formattedDate}`).then(
+      res => {
+        setDataPDF(res.data);
+        console.log(res.data);
+      }
+    )
   
   }
   ,[value]);
@@ -195,7 +203,85 @@ function Dashboard() {
   const stockValues1 = data1.map((item) => item.Valeur_Stock);
   // const stockValues2 = data2.map((item) => item.Valeur_Stock);
   console.log(data1)
+  const generateHTML = () => {
+    
+    const style = {
+      border: '1px solid black',
+      padding: '5px'
+    };
+    console.log('hello');
+    const html = ReactDOMServer.renderToString(
+      <div className="SitHyd">
+        <h1> Situation hydraulique des Barrages</h1>
+        <h2>Journee du {value.toLocaleDateString('en-GB').replace(/\//g, '-')} </h2>
+  
+        <table className='tableSitHyd' style={{ border: '1px solid black' }}>
+          <thead>
+            <tr>
+              <th>Barrage</th>
+              <th>Annee de mise en service</th> 
+              <th>Position</th>
+              <th>Bassin versant Km2</th>
+              <th>Volume regul Calcule m3/s</th>
+              <th>cote m </th>
+              <th>Debit max Evacu m3/s</th>
+              <th>Cap utile actuelle M m3</th>
+              <th>Apports du jour M m3 </th>
+              <th>Lachers du jour M m3</th>
+              <th>*</th>
+              <th>Stock aux barrages M/m3</th>
+              <th>Pluviometrie mm</th>
+              <th>R.S g/l</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dataPDF.map(barrage => {
+              return (
+                <tr key={barrage["Nom"]} >
+                  <td style={style}>{barrage["Nom"]}</td>
+                  <td style={style}>{barrage['AnneeMiseEnService']}</td>
+                  <td style={style}>{barrage["Region"]}</td>
+                  <td style={style}>{barrage["Bassin"]}</td>
+                  <td style={style}>{barrage["volume_regul_calcule"]}</td>
+                  <td style={style}>{barrage["cote"]}</td>
+                  <td style={style}>{barrage["debit"]}</td>
+                  <td style={style}>{barrage["cap_utile_actuelle"]}</td>
+                  <td style={style}>{barrage["valeur_apport"]}</td>
+                  <td style={style}>{barrage["valeur_lacher"]}</td>
+                  <td style={style}>{barrage["utilisation"]}</td>
+                  <td style={style}>{barrage["Valeur_Stock"]}</td>
+                  <td style={style}>{barrage["valeur_Pluv"]}</td>
+                  <td style={style}>{barrage["valeur_RS"]}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+    sendHTMLToFlask(html);
+  };
 
+  const sendHTMLToFlask = (html) => {
+    axios.post('http://localhost:5000/down', { html }, { responseType: 'blob' })
+    .then(response => {
+      // create a blob URL for the returned file data
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      // create a hidden anchor element with the download attribute and set the href to the blob URL
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'situation_hydraulique.pdf');
+      // simulate a click on the anchor element to trigger the download
+      document.body.appendChild(link);
+      link.click();
+      // clean up the URL object after the download is complete
+      window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+      // handle error
+      console.error(error);
+    });
+}
   const handleDamChange = (event) => {
     const selectedName = event.target.value;
     const selectedId = damDictionary[selectedName];
@@ -205,6 +291,10 @@ function Dashboard() {
      setMonthNumbers(event.target.value);
     
   };
+  const handleDownload = () => {
+    generateHTML();
+  }
+  
 
   return (
     <>
@@ -227,7 +317,8 @@ function Dashboard() {
           <option>Barrages ST Cap-Bon</option>
           <option>Tous les barrages</option>
         </select>
-        
+        <button  className="btn-round"
+        color="primary" onClick={handleDownload}>Télécharger PDF</button>
        <br/><br/>
         <Calendar onChange={onChange} value={value} />
         <br/><br/><br/>
