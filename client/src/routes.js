@@ -10,8 +10,11 @@ import AdminPage from "views/AdminPage.js";
 import AgentPage from "views/AgentPage.js";
 import GestionAgent from "views/GestionAgent";
 import GestionAdmin from "views/GestionAdmin";
+
 import Accueil from "views/Accueil";
+
 var routes = [
+ 
   {
     path: "/Accueil",
     name: "Accueil",
@@ -26,20 +29,6 @@ var routes = [
     component: Dashboard,
     layout: "/admin"
   },
-  /*{
-    path: "/icons",
-    name: "Icons",
-    icon: "nc-icon nc-diamond",
-    component: Icons,
-    layout: "/admin"
-  },*/
-  /*{
-    path: "/maps",
-    name: "Maps",
-    icon: "nc-icon nc-pin-3",
-    component: Maps,
-    layout: "/admin"
-  },*/
   {
     path: "/notifications",
     name: "Prévision",
@@ -47,7 +36,7 @@ var routes = [
     component: Notifications,
     layout: "/admin"
   },
-
+ 
   {
     path: "/user-page",
     name: "Espace Intranet",
@@ -55,13 +44,15 @@ var routes = [
     component: UserPage,
     layout: "/admin"
   },
-  {
+
+{
     path: "/PDF",
     name: "PDF",
     icon: "nc-icon nc-caps-small",
     component: GeneratedPDF,
     layout: "/admin"
   },
+ 
   {
     path: "/admin-page",
     name: "Page d'administration",
@@ -87,13 +78,20 @@ var routes = [
     layout: "/admin",
   },
 
-  {
+  /*{
     path: "/DownloadPDF/:date",
     name: "Téléchargement",
     component: DownloadPDF,
     layout: "/admin"
-  },
+  },*/
   
+ /*{
+    path: "/PDF",
+    name: "PDF",
+    icon: "nc-icon nc-caps-small",
+    component: GeneratedPDF,
+    layout: "/admin"
+  },*/
 
 
 ];

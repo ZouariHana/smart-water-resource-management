@@ -53,7 +53,7 @@ function LoginPage () {
          <Col className ="content mx-auto " md="8">
             <Card className="card-user">
           <CardHeader>
-          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Se Connecter</CardTitle>
+          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:'#575757' }}>Se Connecter</CardTitle>
           </CardHeader>
           <CardBody>
             <Form >
@@ -88,8 +88,7 @@ function LoginPage () {
               <Row>
                 <div className="update ml-auto mr-auto text-center">
                   <Button
-                    className="btn-round"
-                    color="primary"
+                    color="info"
                     onClick={() => logInUser()} 
                     //type="submit"
                   >

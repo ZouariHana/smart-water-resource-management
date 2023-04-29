@@ -35,15 +35,15 @@ const AdminPage = () => {
         <Card className="card-user">
           <br/>
           <CardHeader>
-          <Button  className="ml-15" color="primary" onClick={logoutUser}>Déconnecter</Button>
-          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Bienvenue sur la page d'administration</CardTitle>
+          <Button  className="ml-15" color='#575757'onClick={logoutUser}>Déconnecter</Button>
+          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:'#575757'}}>Bienvenue sur la page d'administration</CardTitle>
           </CardHeader>
           <br/>
           <br/>
           <CardBody>
             <div className="update ml-auto mr-auto text-center">
-                <Button type="button"  className="btn-round" color="primary" onClick={() => gogestionpageagent()}>Gestion des agents</Button>
-                <Button type="button" className="btn-round ml-2" style={{ marginRight: '20px' }} color="primary" onClick={() => gogestionpageadmin()}>Gestion des admins</Button>
+                <Button type="button"   color="info" onClick={() => gogestionpageagent()}>Gestion des agents</Button>
+                <Button type="button"  style={{ marginRight: '20px' }} color="info" onClick={() => gogestionpageadmin()}>Gestion des admins</Button>
             </div>
           </CardBody>
         </Card>

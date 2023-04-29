@@ -16,24 +16,44 @@ import {
 } from "reactstrap";
 
 
- 
-
-
-
 function AgentForm(props) {
-  const [nomBarrage, setNomBarrage] = useState('');
-  const [nom, setNom] = useState('');
-  const [prenom, setPrenom] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState('');
+  const [nom, setNom] = useState(''); 
+  const [prenom, setPrenom] = useState('');
+  const [nomBarrage, setNomBarrage] = useState(''); 
  
+  const sendEmail = (email, password) => {
+    fetch('//localhost:5000/send-email', { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        adminEmail: 'imen.rjab@ensi-uma.tn',
+        adminPassword: '26648680',
+        recipientEmail: email,
+        recipientPassword: password
+        
+      })
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Email sent successfully!');
+      } else {
+        throw new Error('Failed to send email.');
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert('Failed to send email.');
+    });
+  };
  
 
   const handleSubmit = (event) =>{
     event.preventDefault();
 
-    
-  
     // Send a POST request to the server to create a new agent
     fetch('//localhost:5000/create_agent', {
       method: 'POST',
@@ -80,7 +100,7 @@ function AgentForm(props) {
          <Col className ="content mx-auto " md="8">
             <Card className="card-user">
           <CardHeader>
-          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Ajouter Un Agent </CardTitle>
+          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #575757' }}>Ajouter Un Agent </CardTitle>
           </CardHeader>
           <CardBody>
             <Form >
@@ -170,11 +190,9 @@ function AgentForm(props) {
               <Row>
                 <div className="update ml-auto mr-auto text-center">
                   <Button
-                    className="btn-round"
-                    color="primary"
-                    onClick={handleSubmit}>
+                    color="info" onClick={(event) =>{handleSubmit(event) ; sendEmail(email,password);}}>
                     Enregistrer
-                  </Button>
+                  </Button> 
                 </div>
               </Row>
             </Form>
@@ -231,7 +249,7 @@ const GestionAgent = () => {
   const logoutUser = async () => {
       try {
         await httpClient.post("//localhost:5000/logout"); // make a request to the logout endpoint
-        window.location.href = "/admin/admin-page"; // redirect to the login page
+        window.location.href = "/admin/user-page"; // redirect to the login page
       } catch (error) {
         console.error(error);
         alert("Failed to logout");
@@ -320,6 +338,16 @@ const GestionAgent = () => {
       });
     };
     
+    const handleAddUser = (newUser) => {
+      // Add the new user to the list of users
+      setUsers([...users, newUser]);
+      alert("Agent has been added successfully");
+    }
+    
+    
+    
+    function gogestionpageadmin() {
+      window.location.href = "/admin/gestion-admin" }   
     
     
   
@@ -331,12 +359,27 @@ const GestionAgent = () => {
           <Col md="12">
             <Card>
               <CardHeader>
-                <Button  className="ml-15" color="primary" onClick={logoutUser}>Précédent</Button>
-                <CardTitle tag="h4" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Gestion des Agents</CardTitle>
+              
+             <div className="col-12">
+                <Button className="float-right" color="pastel"onClick={logoutUser}>Déconnecter</Button>
+                <Button className="float-right" color="pastel"onClick={() => gogestionpageadmin()}>Gestion des admins</Button>
+             </div>
+             <br/>
+             <br/>
+             <br/>
+             <br/>
+             <br/>
+             <br/>
+              <div className="col-6">
+                <CardTitle tag="h4" style={{ fontWeight: 'bold', color:'#575757' }}>Gestion des Agents</CardTitle>
+              </div>
+             
+                
+                <br/>
               </CardHeader>
               <CardBody>
                 <Table responsive>
-                  <thead className="text-primary">
+                  <thead className="text-info" >
                     <tr>
                       <th>ID Admin</th>
                       <th>ID Barrage</th>
@@ -357,7 +400,7 @@ const GestionAgent = () => {
                         <td>{user.email}</td>
                         <td>{user.password}</td>
                         <td>
-                        <Button className="btn-round"color="primary" onClick={() => DeleteUser(user.id)}>Supprimer</Button>
+                        <Button color="info" onClick={() => DeleteUser(user.id)}>Supprimer</Button>     
                         {editingUserId === user.id ? (
                     <>
                       <input type="text" value={editedBarrage} onChange={(e) => setEditedBarrage(e.target.value)} />
@@ -370,16 +413,14 @@ const GestionAgent = () => {
                       <br/> 
                       <input type="text" value={editedPassword} onChange={(e) => setEditedPassword(e.target.value)} />
                       <br/>
-                      <Button className="btn-round" color="primary" onClick={handleSaveClick}>Save</Button>
+                      <Button className="btn-round" color="success" onClick={handleSaveClick}>Save</Button>
                     </>
                   ) : (
-                  <Button className="btn-round"color="primary"onClick={() => handleEditClick(user.id,user.idBarrage,user.Nom,user.Prénom,user.email, user.password)}>Modifier</Button>
+                  <Button color="info" onClick={() =>{ handleEditClick(user.id,user.idBarrage,user.Nom,user.Prénom,user.email, user.password);
+                  sendEmail(user.email, user.password);
+                  }}>Modifier</Button>
                   )}
-                  <Button className="btn-round" color="primary" onClick={() => {
-                      sendEmail(user.email, user.password);
-                      }}>Envoyer Email</Button>
-
-                        </td>
+                    </td>
              
                       </tr>
                        ))}
@@ -393,7 +434,7 @@ const GestionAgent = () => {
           <Col md="12">
             <Card className="card-plain">
                <CardBody>
-                <AgentForm/>
+                <AgentForm onAddUser={handleAddUser}/>
               </CardBody>
             </Card>
           </Col>

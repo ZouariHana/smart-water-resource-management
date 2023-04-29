@@ -101,16 +101,25 @@ useEffect(() => {
     <>
     <div className="content mx-auto "style={{ height: "200vh"}}>
       <Row className="mx-auto"style={{ height: "100vh"}}>
-         <Col className ="content mx-auto " md="8">
+         <Col className ="content mx-auto " md="10">
             <Card className="card-user">
           <CardHeader>
-          <Button  className="ml-15" color="primary" onClick={logoutUser}>Déconnecter</Button>
-          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}> Gestion Barrage :  {nomBarrage} </CardTitle>
+          <div className="col-12">
+          <Button  className="float-right" color="pastel" onClick={logoutUser}>Déconnecter</Button>
+          </div>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <div className="col-11">
+          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:'#575757' }}> Gestion Barrage :     <span style={{ color: '#51bcda' }}>{nomBarrage}</span> </CardTitle>
+          </div>
           </CardHeader>
           <CardBody>
             <Form >
             <Row>
-              <Col className="px-1 mx-auto" md="6">
+              <Col className="px-1 mx-auto" md="4">
               <FormGroup>
                 <label htmlFor="nom_barrage">Nom Barrage</label>
                 <input
@@ -120,10 +129,13 @@ useEffect(() => {
                    disabled
                  />
               </FormGroup>
-         </Col>
-      </Row>
-              <Row>
+         
+             </Col>
+            </Row>
+             <Row>
                 <Col className="px-1 mx-auto" md="6">
+                  <Row>
+                  <Col className="px-1" md="6">
                   <FormGroup>
                     <label>Date du jour:</label>
                     <Input
@@ -135,8 +147,7 @@ useEffect(() => {
                     />
                   </FormGroup>
                 </Col>
-              </Row>
-              <Row>
+            
                 <Col className="px-1 mx-auto" md="6">
                   <FormGroup>
                     <label>Lachers du jour:</label>
@@ -148,8 +159,7 @@ useEffect(() => {
                     />
                   </FormGroup>
                 </Col>
-              </Row>
-              <Row>
+              
                 <Col className="px-1 mx-auto" md="6">
                   <FormGroup>
                     <label>Utilisation:</label>
@@ -173,8 +183,8 @@ useEffect(() => {
                    
                   </FormGroup>
                 </Col>
-              </Row>
-              <Row>
+             
+           
                 <Col className="px-1 mx-auto" md="6">
                   <FormGroup>
                     <label>les apports de jour:</label>
@@ -187,6 +197,7 @@ useEffect(() => {
                   </FormGroup>
                 </Col>
               </Row>
+              
               <Row>
                 <Col className="px-1 mx-auto" md="6">
                   <FormGroup>
@@ -199,8 +210,6 @@ useEffect(() => {
                     />
                   </FormGroup>
                 </Col>
-              </Row>
-              <Row>
                 <Col className="px-1 mx-auto" md="6">
                   <FormGroup>
                     <label>Valeur des lachers pour Ichkeul:</label>
@@ -225,8 +234,7 @@ useEffect(() => {
                     />
                   </FormGroup>
                 </Col>
-              </Row>
-              <Row>
+            
                 <Col className="px-1 mx-auto" md="6">
                   <FormGroup>
                     <label>Pluviomètrie:</label>
@@ -239,11 +247,12 @@ useEffect(() => {
                   </FormGroup>
                 </Col>
               </Row>
+              </Col> 
+              </Row>
               <Row>
                 <div className="update ml-auto mr-auto text-center">
                   <Button
-                    className="btn-round"
-                    color="primary"
+                    color="info"
                     onClick={() => ajouterAgent()}
                   >
                     Ajouter

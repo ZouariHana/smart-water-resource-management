@@ -330,7 +330,7 @@ function Dashboard() {
         <Col lg="6" md="6" sm="6">
         <Card className="card-stats">
         <CardHeader>
-        <CardTitle tag="h5">Répartition des barrages</CardTitle>
+        <CardTitle tag="h5" >Répartition des barrages</CardTitle>
       </CardHeader>
         <CardBody>
         <div className="map-container">
@@ -422,7 +422,7 @@ function Dashboard() {
                   </Col>
                   <Col md="8" xs="7">
                     <div className="numbers">
-                      <p className="card-category">Alimentation de Ichkeul</p>
+                      <p className="card-category" >Alimentation de Ichkeul</p>
                       <CardTitle tag="p">{ichkeul}</CardTitle>
                       <p />
                     </div>

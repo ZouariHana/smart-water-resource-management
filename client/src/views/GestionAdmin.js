@@ -64,7 +64,7 @@ function AgentForm(props) {
          <Col className ="content mx-auto " md="8">
             <Card className="card-user">
           <CardHeader>
-          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Ajouter Un Administrateur </CardTitle>
+          <CardTitle tag="h5" style={{textAlign: 'center', fontWeight: 'bold', color:'#575757' }}>Ajouter Un Administrateur </CardTitle>
           </CardHeader>
           <CardBody>
             <Form >
@@ -99,8 +99,7 @@ function AgentForm(props) {
               <Row>
                 <div className="update ml-auto mr-auto text-center">
                   <Button
-                    className="btn-round"
-                    color="primary"
+                    color="info"
                     onClick={handleSubmit}>
                     Enregistrer
                   </Button>
@@ -156,7 +155,7 @@ const GestionAdmin = () => {
   const logoutUser = async () => {
       try {
         await httpClient.post("//localhost:5000/logout"); 
-        window.location.href = "/admin/admin-page";
+        window.location.href = "/admin/user-page";
       } catch (error) {
         console.error(error);
         alert("Failed to logout");
@@ -202,6 +201,8 @@ const GestionAdmin = () => {
         })
         .catch((error) => console.error(error));
     }
+    function gogestionpageagent() {
+      window.location.href = "/admin/gestion-agent" } 
   
    return (
     <>
@@ -210,12 +211,27 @@ const GestionAdmin = () => {
           <Col md="12">
             <Card>
               <CardHeader>
-                <Button  className="mr-8Q" color="primary" onClick={logoutUser}>Précédent</Button>
-                <CardTitle tag="h4" style={{textAlign: 'center', fontWeight: 'bold', color:' #eb6532' }}>Gestion des Admins</CardTitle>
+                   
+             <div className="col-12">
+                <Button className="float-right" color="pastel"onClick={logoutUser}>Déconnecter</Button>
+                <Button className="float-right" color="pastel"onClick={() => gogestionpageagent()}>Gestion des Agents</Button>
+             </div>
+             <br/>
+             <br/>
+             <br/>
+             <br/>
+             <br/>
+             <br/>
+              <div className="col-6">
+                <CardTitle tag="h4" style={{ fontWeight: 'bold', color:'#575757' }}>Gestion des Admins</CardTitle>
+              </div>
+             
+                
+                <br/>
               </CardHeader>
               <CardBody>
                 <Table responsive>
-                  <thead className="text-primary">
+                  <thead className="text-info">
                     <tr>
                       <th>ID Admin</th>
                       <th>Email</th>
@@ -230,17 +246,17 @@ const GestionAdmin = () => {
                         <td>{user.email}</td>
                         <td>{user.password}</td>
                         <td>
-                        <Button  className="btn-round"color="primary" onClick={() => DeleteUser(user.id)}>Supprimer</Button>
+                        <Button color="info" onClick={() => DeleteUser(user.id)}>Supprimer</Button>
                         {editingUserId === user.id ? (
                     <>
                       <input type="text" value={editedEmail} onChange={(e) => setEditedEmail(e.target.value)} />
                       <br/> 
                       <input type="text" value={editedPassword} onChange={(e) => setEditedPassword(e.target.value)} />
                       <br/>
-                      <Button className="btn-round" color="primary" onClick={handleSaveClick}>Save</Button>
+                      <Button  color="info" onClick={handleSaveClick}>Save</Button>
                     </>
                   ) : (
-                  <Button className="btn-round"color="primary"onClick={() => handleEditClick(user.id, user.email, user.password)}>Modifier</Button>
+                  <Button color="info"onClick={() => handleEditClick(user.id, user.email, user.password)}>Modifier</Button>
                   )}
                  </td>
                  </tr>
