@@ -20,7 +20,7 @@ class ApplicationConfig:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:11139598@localhost/pcd'
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:pcdpcdimen@localhost/pcd'
 
 
     SESSION_TYPE = "redis"
@@ -49,6 +49,7 @@ with app.app_context():
 from view1 import * 
 from viewsPDFDownload import *
 from views import *
+from predict import *  
 
 if __name__=="__main__":
     app.run(debug=True)
