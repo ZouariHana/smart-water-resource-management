@@ -3,6 +3,8 @@ import numpy as np
 import datetime
 import tensorflow as tf
 from tensorflow import keras
+from flask import Flask,request, jsonify
+from app import app,db
 
 
 
@@ -127,8 +129,34 @@ test_predictions = model.predict(X_test).flatten()
 
 test_predictions = model.predict(X_test)
 
-# Create a DataFrame with testing observations and predictions
-df_test = pd.DataFrame({'Date': dates_test, 'Observations': y_test.reshape(-1), 'Predictions': test_predictions.reshape(-1)})
-pickle.dump(df_test,open('model.pkl','wb'))
-model=pickle.load(open('model.pkl','rb'))
-print(model)             
+pickle.dump(test_predictions,open('model.pkl','wb')) 
+
+# Create a DataFrame with dates for the year 2023
+dates_2023 = pd.date_range('2023-01-01', '2030-12-31')
+
+# Create a DataFrame with the inputs for the model
+X_2023 = pd.DataFrame({'dayofweek': dates_2023.dayofweek,
+                       'dayofyear': dates_2023.dayofyear,
+                       'quarter':   dates_2023.quarter})
+
+
+# Reshape the input data for the model
+X_2023 = X_2023.values.reshape((-1, 3, 1))
+
+# Use the model to make predictions on the input data
+predictions_2023 = model.predict(X_2023).flatten()
+
+# Create a DataFrame with the predictions
+df_predictions_2023 = pd.DataFrame({'date': dates_2023, 'stock_value': predictions_2023})
+
+with open('model.pkl', 'wb') as f:
+    pickle.dump(df_predictions_2023, f)   
+    
+# Load the predictions for 2023 from the pickled file
+with open('model.pkl', 'rb') as f:
+    df_predictions_2023 = pickle.load(f)
+print(df_predictions_2023)  
+
+
+
+
