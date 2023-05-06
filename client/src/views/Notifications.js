@@ -117,6 +117,7 @@ function PredictionPage() {
           <div className="col-11">
           <Form >
             <Row >
+            <Col className="mx-auto" md="6">
         <FormGroup>
           <label >Choisir une date</label>
           <input
@@ -127,6 +128,7 @@ function PredictionPage() {
             placeholder="YYYY-MM-DD"
           />
         </FormGroup>
+        </Col>
         </Row>
         </Form>
         </div>
